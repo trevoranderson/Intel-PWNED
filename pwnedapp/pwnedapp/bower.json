@@ -1,0 +1,26 @@
+{
+  "name": "PWNED",
+  "version": "0.0.0",
+  "homepage": "https://github.com/trevoranderson/Intel-PWNED",
+  "authors": [
+    "Trevor Anderson <trevora@ucla.edu>",
+    "Helen Liang <h.liang93@gmail.com>",
+    "Kevin Lin <kevin.s.lin@ucla.edu>",
+    "Yue Liu <ginkgo@ucla.edu>",
+    "Cristian Manuel <cmanuel9@g.ucla.edu>",
+    "Xinlei Wang <wangxinlei.zju@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "1.2.x",
+    "angular-route": "1.2.x"
+  }
+}

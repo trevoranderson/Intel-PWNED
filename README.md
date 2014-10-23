@@ -1,28 +1,49 @@
-**Intel-PWNED**
-===========
+Intel-PWNED
+==========
 
-Current Requirements to run:
+Requirements
+-------------------
 
-MongoDB (must be running)
-NodeJS
+###MongoDB
 
-**Installation:**
+http://docs.mongodb.org/manual/installation/
 
-    npm install
-    
-  and then run
-  
-    node server.js
+###NodeJS
 
-**Structure:**
+http://nodejs.org/download/
 
-**app/models** is where DB schemas are stored
+Setup
+---------
 
-**common** is where I put common functionality I need across multiple files that I
+####1. Change directory
+
+Make sure you are in `pwnedapp/pwnedapp`
+
+####2. Initialize the app
+
+Run `npm start`. This command automatically runs the following:
+
+`bower install`: Installs packages 
+
+`npm install`: Installs dependencies 
+
+`node server.js`: Starts the server
+
+
+####3. View the app
+
+In your browser, navigate to `http://localhost:8080/`
+
+Structure:
+-------------
+
+**/models** is where DB schemas are stored
+
+**/common** is where I put common functionality I need across multiple files that I
 haven't 'modulized' yet.
 
-**public** is a 'webroot' for serving static files (images/stylesheets/etc)
+**/public** is a 'webroot' for serving static files (images/stylesheets/etc)
 
-**routes** contains routing functions (ex '/' is the root).
+**/routes** contains routing functions (ex '/' is the root). (**TODO: This will be configured in app.js**)
 
-**views** contains markup information using EJS template.
+**/views** contains markup information using EJS template.
