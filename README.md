@@ -21,14 +21,13 @@ Make sure you are in `pwnedapp/pwnedapp`
 
 ####2. Initialize the app
 
-Run `npm start`. This command automatically runs the following:
+Run to `bower install` to install packages (you only need to do this once).
 
-`bower install`: Installs packages 
+Run `npm start`. This command automatically runs the following:
 
 `npm install`: Installs dependencies 
 
 `node server.js`: Starts the server
-
 
 ####3. View the app
 
@@ -46,4 +45,4 @@ haven't 'modulized' yet.
 
 **/routes** contains routing functions (ex '/' is the root). (**TODO: This will be configured in app.js**)
 
-**/views** contains markup information using EJS template.
+**/views** contains partials
