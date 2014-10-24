@@ -31,10 +31,19 @@ app.configure(function() {
 	app.use(passport.session()); // persistent login sessions
 	app.use(flash()); // use connect-flash for flash messages stored in session
 
+  app.use(express.static(__dirname + '/'));
+  app.use('/bower_components', express.static(__dirname + '/bower_components'));
+  app.use('/components', express.static(__dirname + '/components'));
+
 });
 
 // routes ======================================================================
 require('./routes')(app, passport); // load our routes and pass in our app and fully configured passport
+
+// load the single view file (angular will handle the page changes on the front-end)
+app.get('*', function(req, res) {
+  res.sendfile('index.html'); // load the single view file (angular will handle the page changes on the front-end)
+});
 
 // launch ======================================================================
 app.listen(port);
