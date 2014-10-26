@@ -1,4 +1,4 @@
-myApp.controller('LoginController', ['$scope', '$http', function($scope, $http) {
+myApp.controller('LoginController', ['$scope', '$http', '$location', function($scope, $http, $location) {
   $scope.user = {};
 
   $scope.login = function() {
@@ -10,6 +10,8 @@ myApp.controller('LoginController', ['$scope', '$http', function($scope, $http) 
     $http.post("/login", config).success(function (data, status, header) {
         if (data.loginMessage) {
           $scope.message = data.loginMessage;
+        } else {
+          $location.path('/profile');
         }
     }).error(function () {
         console.log('error');
@@ -17,7 +19,7 @@ myApp.controller('LoginController', ['$scope', '$http', function($scope, $http) 
   };
 }]);
 
-myApp.controller('SignupController', ['$scope', '$http', function($scope, $http) {
+myApp.controller('SignupController', ['$scope', '$http', '$location', function($scope, $http, $location) {
   $scope.user = {};
 
   $scope.signup = function() {
@@ -29,6 +31,8 @@ myApp.controller('SignupController', ['$scope', '$http', function($scope, $http)
     $http.post("/signup", config).success(function (data, status, header) {
       if (data.signupMessage) {
         $scope.message = data.signupMessage;
+      } else {
+        $location.path('/');
       }
     }).error(function () {
       console.log('error');
