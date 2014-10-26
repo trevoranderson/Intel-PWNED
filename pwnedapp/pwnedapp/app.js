@@ -53,10 +53,11 @@ var myApp = angular.module('myApp', [
 config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
   $routeProvider.when('/login', {
-    templateUrl: 'views/login.ejs',
+    templateUrl: 'views/auth/login.ejs',
     controller: 'LoginController'
   }).when('/signup', {
-    templateUrl: 'views/signup.ejs'
+    templateUrl: 'views/auth/signup.ejs',
+    controller: 'SignupController'
   }).when('/profile', {
     templateUrl: 'views/profile.ejs'
   }).otherwise({
