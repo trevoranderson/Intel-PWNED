@@ -25,9 +25,9 @@ Run to `bower install` to install packages (you only need to do this once).
 
 Run `npm start`. This command automatically runs the following:
 
-`npm install`: Installs dependencies 
+  - `npm install`: Installs dependencies 
 
-`node server.js`: Starts the server
+  - `node server.js`: Starts the server
 
 ####3. View the app
 
