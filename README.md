@@ -15,6 +15,8 @@ http://nodejs.org/download/
 Setup
 ---------
 
+Note: MongoDB must be running (see MongoDB Install guide).
+
 ####1. Change directory
 
 Make sure you are in `pwnedapp/pwnedapp`
