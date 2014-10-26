@@ -45,6 +45,6 @@ haven't 'modulized' yet.
 
 **/public** is a 'webroot' for serving static files (images/stylesheets/etc)
 
-**/routes** contains routing functions (ex '/' is the root). (**TODO: This will be configured in app.js**)
+**/routes** contains routing functions (ex '/' is the root).
 
 **/views** contains partials
