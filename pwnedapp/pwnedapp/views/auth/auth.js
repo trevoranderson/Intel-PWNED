@@ -13,8 +13,8 @@ myApp.controller('LoginController', ['$scope', '$http', '$location', function($s
         } else {
           $location.path('/profile');
         }
-    }).error(function () {
-        console.log('error');
+    }).error(function (err) {
+        console.log(err);
       });
   };
 }]);

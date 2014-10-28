@@ -24,6 +24,7 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies']
     templateUrl: 'views/home.html'
   });
 }]).run(function($rootScope, $http, $location) {
+
   $rootScope.logout = function () {
     $http.post('/api/logout');
     $location.path('/');

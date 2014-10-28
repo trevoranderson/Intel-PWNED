@@ -39,7 +39,7 @@ module.exports = function(passport) {
         passwordField : 'password',
         passReqToCallback : true // allows us to pass back the entire request to the callback
     },
-    function(req, email, password, done) {z
+    function(req, email, password, done) {
 
 		// find a user whose email is the same as the forms email
 		// we are checking to see if the user trying to login already exists

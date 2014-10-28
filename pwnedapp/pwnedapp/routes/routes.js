@@ -23,12 +23,6 @@ module.exports = function(app, passport) {
   // =====================================
   // SIGNUP ==============================
   // =====================================
-  // show the signup form
-//  app.get('/signup', function(req, res) {
-//    console.log('test');
-//    // render the page and pass in any flash data if it exists
-//    res.json({ message: req.flash('signupMessage') });
-//  });
 
   // process the signup form
   app.post('/signup', function(req, res, next) {
@@ -58,6 +52,14 @@ module.exports = function(app, passport) {
   app.post('/api/logout', function(req, res) {
     req.session.destroy();
     req.logout();
+  });
+
+  // =====================================
+  // IS LOGGED IN ========================
+  // =====================================
+
+  app.post('/api/loggedIn', function(req, res) {
+    if (req.isAuthenticated()) {}
   });
 
 };
