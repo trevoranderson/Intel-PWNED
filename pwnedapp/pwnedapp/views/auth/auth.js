@@ -1,4 +1,4 @@
-myApp.controller('LoginController', ['$scope', '$http', '$location', function($scope, $http, $location) {
+myApp.controller('LoginController', ['$rootScope', '$scope', '$http', '$location', function($rootScope, $scope, $http, $location) {
   $scope.user = {};
 
   $scope.login = function() {
@@ -7,10 +7,11 @@ myApp.controller('LoginController', ['$scope', '$http', '$location', function($s
         'password' : $scope.user.password
     };
 
-    $http.post("/login", config).success(function (data, status, header) {
+    $http.post("/login", config).success(function (data) {
         if (data.loginMessage) {
           $scope.message = data.loginMessage;
         } else {
+          $rootScope.loggedIn = true;
           $location.path('/profile');
         }
     }).error(function (err) {
@@ -19,7 +20,7 @@ myApp.controller('LoginController', ['$scope', '$http', '$location', function($s
   };
 }]);
 
-myApp.controller('SignupController', ['$scope', '$http', '$location', function($scope, $http, $location) {
+myApp.controller('SignupController', ['$rootScope','$scope', '$http', '$location', function($rootScope, $scope, $http, $location) {
   $scope.user = {};
 
   $scope.signup = function() {
@@ -28,10 +29,11 @@ myApp.controller('SignupController', ['$scope', '$http', '$location', function($
       'password' : $scope.user.password
     };
 
-    $http.post("/signup", config).success(function (data, status, header) {
+    $http.post("/signup", config).success(function (data) {
       if (data.signupMessage) {
         $scope.message = data.signupMessage;
       } else {
+        $rootScope.loggedIn = true;
         $location.path('/');
       }
     }).error(function () {

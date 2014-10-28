@@ -24,9 +24,18 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies']
     templateUrl: 'views/home.html'
   });
 }]).run(function($rootScope, $http, $location) {
+  $rootScope.loggedIn = false;
+
+  $http.post('/api/loggedIn').success(function (data) {
+    if (data.email) {
+      $rootScope.loggedIn = true;
+    }
+  });
 
   $rootScope.logout = function () {
-    $http.post('/api/logout');
-    $location.path('/');
+    $http.post('/api/logout').success(function (data) {
+      $rootScope.loggedIn = false;
+      $location.path('/');
+    });
   }
 });

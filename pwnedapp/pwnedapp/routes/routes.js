@@ -52,6 +52,7 @@ module.exports = function(app, passport) {
   app.post('/api/logout', function(req, res) {
     req.session.destroy();
     req.logout();
+    res.send(200);
   });
 
   // =====================================
@@ -59,7 +60,9 @@ module.exports = function(app, passport) {
   // =====================================
 
   app.post('/api/loggedIn', function(req, res) {
-    if (req.isAuthenticated()) {}
+    if (req.isAuthenticated()) {
+      res.send({ email : req.user.email });
+    }
   });
 
 };

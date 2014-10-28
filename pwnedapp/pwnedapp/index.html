@@ -44,8 +44,10 @@
           </li>
         </ul>
         <div class="nav navbar-nav navbar-right auth">
-          <a href="/login" class="btn btn-default"><span class="fa fa-user"></span> Local Login</a>
-          <a href="/signup" class="btn btn-default"><span class="fa fa-user"></span> Local Signup</a>
+          <a href="/login" ng-if="!loggedIn" class="btn btn-default"><span class="fa fa-user"></span> Local Login</a>
+          <a href="/signup" ng-if="!loggedIn" class="btn btn-default"><span class="fa fa-user"></span> Local Signup</a>
+          <a href="/profile" ng-if="loggedIn" class="btn btn-default"><span class="fa fa-user"></span> View Profile</a>
+          <a ng-click="logout()" ng-if="loggedIn" class="btn btn-default"> Logout</a>
         </div>
       </div><!--/.nav-collapse -->
     </div><!--/.container-fluid -->
