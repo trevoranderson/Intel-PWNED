@@ -1,3 +1,13 @@
+/*
+Flow of program:
+1. Send a seed async call to cvs.com
+2. Crawl through categories and add all product URL's to productQueue
+3. Once there are no more requests pending, start scraping product URL's at X requests per second
+4. Output each product info to console/update db
+*/
+
+
+
 //request: sending async requests for HTML
 //cheerio: creating dom object from html
 //async: serializing async requests
