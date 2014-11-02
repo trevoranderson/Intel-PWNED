@@ -4,16 +4,18 @@ Intel-PWNED
 Requirements
 -------------------
 
-###MongoDB
+####Install MongoDB
 
 http://docs.mongodb.org/manual/installation/
 
-###NodeJS
+####Install NodeJS
 
 http://nodejs.org/download/
 
 Setup
 ---------
+
+Note: MongoDB must be running (see MongoDB Install guide).
 
 ####1. Change directory
 
@@ -25,9 +27,9 @@ Run to `bower install` to install packages (you only need to do this once).
 
 Run `npm start`. This command automatically runs the following:
 
-`npm install`: Installs dependencies 
+  - `npm install`: Installs dependencies 
 
-`node server.js`: Starts the server
+  - `node server.js`: Starts the server
 
 ####3. View the app
 
@@ -43,6 +45,6 @@ haven't 'modulized' yet.
 
 **/public** is a 'webroot' for serving static files (images/stylesheets/etc)
 
-**/routes** contains routing functions (ex '/' is the root). (**TODO: This will be configured in app.js**)
+**/routes** contains routing functions (ex '/' is the root).
 
 **/views** contains partials
