@@ -8,42 +8,57 @@ var port     = process.env.PORT || 8080;
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash    = require('connect-flash');
+var path     = require('path');
+
+var morgan       = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser   = require('body-parser');
+var session      = require('express-session');
+
+var MongoStore   = require('connect-mongo')(session);
 
 var configDB = require('./config/database.js');
 
 // configuration ===============================================================
-mongoose.connect(configDB.url); // connect to our database
+mongoose.connect(configDB.url, function (err) {
+}); // connect to our database
 
 require('./config/passport')(passport); // pass passport for configuration
 
-app.configure(function() {
+// set up our express applicatio
+app.use(morgan('dev')); // log every request to the console
+app.use(cookieParser()); // read cookies (needed for auth)
+app.use(bodyParser.json()); // get information from html forms
+app.use(bodyParser.urlencoded({ extended: true }));
 
-	// set up our express application
-	app.use(express.logger('dev')); // log every request to the console
-	app.use(express.cookieParser()); // read cookies (needed for auth)
-	app.use(express.bodyParser()); // get information from html forms (depending on how we structure, probably can just call when needed)
+app.use(session({
+  cookie: {maxAge: new Date(Date.now() + 3600000)},
+  secret: "howdoyouturnthisthingon",
+  store: new MongoStore({db: mongoose.connection.db})
+}));
 
-	app.set('view engine', 'ejs'); // set up ejs for templating
+app.set('view engine', 'ejs'); // set up ejs for templating
 
-	// required for passport
-	app.use(express.session({ secret: 'idontevenknowwhatthisisforbutillputalongstringanyways' })); // session secret
-	app.use(passport.initialize());
-	app.use(passport.session()); // persistent login sessions
-	app.use(flash()); // use connect-flash for flash messages stored in session
+// required for passport
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+app.use(flash()); // use connect-flash for flash messages stored in session
 
-  app.use(express.static(__dirname + '/'));
-  app.use('/bower_components', express.static(__dirname + '/bower_components'));
-  app.use('/components', express.static(__dirname + '/components'));
-
-});
+app.use('/', express.static(path.join(__dirname, '/')));
 
 // routes ======================================================================
-require('./routes')(app, passport); // load our routes and pass in our app and fully configured passport
 
-// load the single view file (angular will handle the page changes on the front-end)
-app.get('*', function(req, res) {
-  res.sendfile('index.html'); // load the single view file (angular will handle the page changes on the front-end)
+//////////////////////////////////////////////////////
+//  These need to be declared any other routes for
+// AngularJS Html5Mode compatibility (single page site)
+
+app.get('/*', function(req, res) {
+  res.sendfile('index.html');
 });
+
+//////////////////////////////////////////////////////
+
+require('./routes/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
 app.listen(port);
