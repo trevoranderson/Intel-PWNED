@@ -4,17 +4,17 @@
 	<h1><span class="fa fa-sign-in"></span> Login</h1>
 
 	<!-- show any messages that come back with authentication -->
-	<div ng-if="alerts > 0" class="alert alert-danger"><%= message %></div>
+	<div ng-show="message" class="alert alert-danger">{{ message }}</div>
 
 	<!-- LOGIN FORM -->
-	<form action="/login" method="post">
+	<form ng-submit="login()">
 		<div class="form-group">
 			<label>Email</label>
-			<input type="text" class="form-control" name="email">
+			<input type="text" class="form-control" ng-model="user.email" name="email">
 		</div>
 		<div class="form-group">
 			<label>Password</label>
-			<input type="password" class="form-control" name="password">
+			<input type="password" class="form-control" ng-model="user.password" name="password">
 		</div>
 
 		<button type="submit" class="btn btn-warning btn-lg">Login</button>
@@ -26,4 +26,3 @@
 	<p>Or go <a href="/">home</a>.</p>
 
 </div>
-
