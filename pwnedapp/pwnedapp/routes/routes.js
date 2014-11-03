@@ -4,7 +4,11 @@ module.exports = function (app, passport) {
     app.get('/', function (req, res) {
         res.sendfile('index.html');
     });
-
+    app.get('/products/search/:query', function (req, res) {
+        productDB.find({ name: new RegExp(req.param("query"), 'i'), }).exec(function (err, products) {
+            res.json(products);
+        });
+    });
     app.get('/products', function (req, res) {
         productDB.find().exec(function (err, products) {
             // Quick hack to put *something* in the database if nothing is there. Remove when proper CRUD is enabled
