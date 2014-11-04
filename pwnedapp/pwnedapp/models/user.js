@@ -5,6 +5,7 @@ var bcrypt = require('bcrypt-nodejs');
 var userSchema = mongoose.Schema({
     email        : String,
     password     : String, // Bcrypt has salt built in
+    watchlist    : [String], // Corresponds to ProductIDs
 });
 
 // methods ======================
