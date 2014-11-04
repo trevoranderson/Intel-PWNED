@@ -166,3 +166,5 @@ bower_components/
 tmp
 .DS_Store
 .idea
+js/script.js
+js/script.min.js

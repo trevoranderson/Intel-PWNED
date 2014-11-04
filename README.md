@@ -21,17 +21,17 @@ Note: MongoDB must be running (see MongoDB Install guide).
 
 Make sure you are in `pwnedapp/pwnedapp`
 
-####2. Initialize the app
+####2. Initialize
 
-Run to `bower install` to install packages (you only need to do this once).
+1. Run `bower install`. **You only need to do this once to install packages.**
 
-Run `npm start`. This command automatically runs the following:
+2. Run `npm install`. **You only need to do this once to install dependencies.**
 
-  - `npm install`: Installs dependencies 
+3. Run `grunt default` to concatenate and minify all required javascript. If you add or modify new components or client-side Javascript, you will need to modify Gruntfile.js and run this again.
 
-  - `node server.js`: Starts the server
+####3. Start the app
 
-####3. View the app
+Run `node server.js` to start the server.
 
 In your browser, navigate to `http://localhost:8080/`
 
@@ -48,3 +48,5 @@ haven't 'modulized' yet.
 **/routes** contains routing functions (ex '/' is the root).
 
 **/views** contains partials
+
+**/components** contains directives

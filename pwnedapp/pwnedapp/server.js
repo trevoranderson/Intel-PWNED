@@ -49,12 +49,6 @@ app.use('/', express.static(path.join(__dirname, '/')));
 
 // routes ======================================================================
 
-//////////////////////////////////////////////////////
-//  These need to be declared any other routes for
-// AngularJS Html5Mode compatibility (single page site)
-
-//////////////////////////////////////////////////////
-
 require('./routes/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================

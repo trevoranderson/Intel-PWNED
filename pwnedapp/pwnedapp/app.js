@@ -23,7 +23,7 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies']
   }).otherwise({
     templateUrl: 'views/home.html'
   });
-}]).run(function($rootScope, $http, $location) {
+}]).run(['$rootScope', '$http', '$location', function($rootScope, $http, $location) {
   $rootScope.loggedIn = false;
 
   $http.post('/api/loggedIn').success(function (data) {
@@ -38,4 +38,4 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies']
       $location.path('/');
     });
   }
-});
+}]);
