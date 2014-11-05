@@ -27,9 +27,9 @@ Make sure you are in `pwnedapp/pwnedapp`
 
 2. Run `npm install`. **You only need to do this once to install dependencies.**
 
-3. Run `npm install -g grunt-cli` to install grunt globally.
+3. Run `npm install -g grunt-cli`. **You only need to do this once to install grunt globally.**
 
-4. Run `grunt default` to concatenate and minify the Angular code and packages. You only have to do this once unless you are working on client-side (AngularJS) code.
+4. Run `grunt default` to concatenate and minify the Angular code and packages. You only have to do this once **unless** you are working on client-side (AngularJS) code.
 
 ####3. Start the app
 
