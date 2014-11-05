@@ -33,7 +33,7 @@ Make sure you are in `pwnedapp/pwnedapp`
 
 ####3. Start the app
 
-Run `node server.js` to start the server.
+Make sure Mongo is running, and run `node server.js` to start the server.
 
 In your browser, navigate to `http://localhost:8080/`
 
