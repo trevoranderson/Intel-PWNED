@@ -27,11 +27,10 @@ Make sure you are in `pwnedapp/pwnedapp`
 
 2. Run `npm install`. **You only need to do this once to install dependencies.**
 
-3. Run `grunt default` to concatenate and minify all required javascript. If you add or modify new components or client-side Javascript, you will need to modify Gruntfile.js and run this again.
-
 ####3. Start the app
 
-Run `node server.js` to start the server.
+1. Run `grunt default` to concatenate and minify the Angular code and packages. This will also start watching for changes in these files, and will concat/uglify automatically again if code is changed.
+2. Run `node server.js` to start the server.
 
 In your browser, navigate to `http://localhost:8080/`
 
@@ -49,4 +48,4 @@ haven't 'modulized' yet.
 
 **/views** contains partials
 
-**/components** contains directives
+**/components** contains components for the client-side
