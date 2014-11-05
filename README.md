@@ -27,10 +27,13 @@ Make sure you are in `pwnedapp/pwnedapp`
 
 2. Run `npm install`. **You only need to do this once to install dependencies.**
 
+3. Run `npm install -g grunt-cli` to install grunt globally.
+
+4. Run `grunt default` to concatenate and minify the Angular code and packages. You only have to do this once unless you are working on client-side (AngularJS) code.
+
 ####3. Start the app
 
-1. Run `grunt default` to concatenate and minify the Angular code and packages. This will also start watching for changes in these files, and will concat/uglify automatically again if code is changed.
-2. Run `node server.js` to start the server.
+Run `node server.js` to start the server.
 
 In your browser, navigate to `http://localhost:8080/`
 
