@@ -1,5 +1,8 @@
 ﻿// app/routes.js
+"use strict";
+var fn = require('fn.js');
 var productDB = require('../models/product.js');
+var userDB = require('../models/user.js');
 module.exports = function (app, passport) {
 
     app.get('/products/search/:query', function (req, res) {
@@ -36,6 +39,79 @@ module.exports = function (app, passport) {
         });
     });
     
+    // C[ru]D operations for user's watchlist
+    // get the products in their watchlist.
+    app.get('/watchlist', isLoggedIn, function (req, res) {
+        userDB.findById(req.user.id).exec(function (err, user) {
+            productDB.find({
+                _id: { $in: user.watchlist }
+            }, function (err, products) { 
+                res.json(fn.map(function (pId) {
+                    return fn.filter(function (p) { 
+                        return p.id === pId;
+                    }, products)[0];
+                }, user.watchlist));
+            });
+        });
+    });
+    // Add a product by ID
+    app.get('/watchlist/add/:pid', isLoggedIn , function (req, res) {
+        var pId = req.param("pid");
+        productDB.findById(pId, function (err, product) {
+            if (err || !product) {
+                res.json({
+                    status: "error",
+                    description: "product with id: " + pId + " not found",
+                });
+                return;
+            }
+            //update user
+            userDB.findById(req.user.id).exec(function (err, user) {
+                if (err) {
+                    res.json({ status: "error", description: "couldn't find user or something" });
+                    return;
+                }
+                if (user.watchlist.indexOf(pId) === -1) {
+                    // Doesn't exist
+                    user.watchlist.length++;
+                    user.watchlist.set(user.watchlist.length - 1, pId);
+                    user.save(function (err) {
+                        if (err) {
+                            res.json({ status: "error", description: "I have no idea what went wrong" });
+                            return;
+                        }
+                        res.json({ status: "success", description: "Added product with Id " + pId + " to watchlist" });
+                    });
+                }
+                else {
+                    //already added. not an error though
+                    res.json({ status: "success", description: "Product already in watchlist" });
+                }
+            });
+        });
+    });
+    // Remove a product by ID
+    app.get('/watchlist/rm/:pid', isLoggedIn , function (req, res) {
+        var pId = req.param("pid");
+        productDB.findById(pId, function (err, product) {
+            if (err || !product) {
+                res.json({
+                    status: "error",
+                    description: "product with id: " + pId + " not found",
+                });
+                return;
+            }
+            //update user
+            userDB.update({ _id: req.user.id }, {
+                $pull: { "watchlist": pId }
+            }, function (err, result) {
+                res.json({
+                    status: "success",
+                    description: "product with id: " + pId + " removed from watchlist",
+                });
+            });
+        });
+    });
     // =====================================
     // LOGIN ===============================
     // =====================================
