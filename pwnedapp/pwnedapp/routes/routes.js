@@ -4,10 +4,24 @@ var fn = require('fn.js');
 var productDB = require('../models/product.js');
 var userDB = require('../models/user.js');
 module.exports = function (app, passport) {
-
+    
     app.get('/products/search/:query', function (req, res) {
-        productDB.find({ name: new RegExp(req.param("query"), 'i'), }).exec(function (err, products) {
-            res.json(products);
+        var regQuery = new RegExp(req.param("query"), 'i')
+        productDB.find({ name: regQuery }).exec(function (err, products) {
+            var ret = fn.map(function (proj) {
+                return proj.product;
+            },
+            fn.map(function (p) {
+                    return {
+                        product: p,
+                        index: regQuery.exec(p.name).index,
+                    };
+                }, products)
+            .sort(function (a, b) {
+                        return (a.index < b.index) ? -1: 1;
+                    })
+            )
+            res.json(ret);
         });
     });
     app.get('/products', function (req, res) {
@@ -45,12 +59,12 @@ module.exports = function (app, passport) {
         userDB.findById(req.user.id).exec(function (err, user) {
             productDB.find({
                 _id: { $in: user.watchlist }
-            }, function (err, products) { 
+            }, function (err, products) {
                 res.json(fn.map(function (pId) {
-                    return fn.filter(function (p) { 
-                        return p.id === pId;
-                    }, products)[0];
-                }, user.watchlist));
+                        return fn.filter(function (p) {
+                            return p.id === pId;
+                        }, products)[0];
+                    }, user.watchlist));
             });
         });
     });
@@ -174,11 +188,10 @@ module.exports = function (app, passport) {
             res.send({ email : req.user.email });
         }
     });
-
-  // Redirect other urls to single-page Angular app
-  app.get('/*', function (req, res) {
-    res.sendfile('index.html');
-  });
+    
+    app.get('/', function (req, res) {
+        res.sendfile('index.html');
+    });
 
 };
 
