@@ -3,7 +3,7 @@
 // TODO: merge with stuff in the /routes folder !
 
 // Declare app level module which depends on views, and components
-var myApp = angular.module('myApp', ['ngRoute', 'ngCookies']
+var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap']
 ).config(['$routeProvider', '$locationProvider',  function($routeProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
   $routeProvider.when('/login', {

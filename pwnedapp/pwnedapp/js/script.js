@@ -35933,7 +35933,7 @@ angular.module("ui.bootstrap",["ui.bootstrap.tpls","ui.bootstrap.transition","ui
 // TODO: merge with stuff in the /routes folder !
 
 // Declare app level module which depends on views, and components
-var myApp = angular.module('myApp', ['ngRoute', 'ngCookies']
+var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap']
 ).config(['$routeProvider', '$locationProvider',  function($routeProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
   $routeProvider.when('/login', {
@@ -36019,5 +36019,16 @@ myApp.controller('SignupController', ['$rootScope','$scope', '$http', '$location
   }
 
   $scope.user = profile.data.user;
+
+}]);
+;myApp.controller('SearchController', ['$scope', '$http', function($scope, $http) {
+
+  $scope.searchTypeahead = function (value) {
+    return $http.get("/products/search/"+value).then(function (response) {
+      return response.data.map(function(item){
+        return item.name;
+      });
+    });
+  }
 
 }]);

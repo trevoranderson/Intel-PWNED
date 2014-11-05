@@ -4,7 +4,7 @@
 
     <form class="navbar-form" role="search">
       <div class="form-group">
-        <input class="form-control input-lg" type="text" placeholder="What are you buying today?">
+        <input ng-controller="SearchController" class="form-control input-lg" type="text" placeholder="What are you buying today? Hint: type E" ng-model="query" typeahead="result for result in searchTypeahead($viewValue) | limitTo:10">
       </div>
       <button type="submit" class="btn btn-lg btn-search">PWNED!</button>
     </form>
