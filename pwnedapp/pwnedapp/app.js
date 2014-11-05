@@ -37,6 +37,10 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap']
 }]).run(['$rootScope', '$http', '$location', function($rootScope, $http, $location) {
   $rootScope.loggedIn = false;
 
+  $rootScope.$on('$routeChangeStart', function() {
+    $rootScope.showSearch = $location.path() !== '/';
+  });
+
   $http.post('/api/loggedIn').success(function (data) {
     if (data.email) {
       $rootScope.loggedIn = true;

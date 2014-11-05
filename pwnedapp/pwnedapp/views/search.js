@@ -1,11 +1,13 @@
 myApp.controller('SearchController', ['$scope', '$http', '$location', function($scope, $http, $location) {
 
   $scope.searchTypeahead = function (value) {
-    return $http.get("/products/search/"+value).then(function (response) {
-      return response.data.map(function(item){
-        return item.name;
+    if (value.length > 0) {
+      return $http.get("/products/search/" + value).then(function (response) {
+        return response.data.map(function (item) {
+          return item.name;
+        });
       });
-    });
+    }
   }
 
   $scope.search = function (query) {

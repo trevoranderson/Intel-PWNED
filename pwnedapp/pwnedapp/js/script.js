@@ -35967,6 +35967,10 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap']
 }]).run(['$rootScope', '$http', '$location', function($rootScope, $http, $location) {
   $rootScope.loggedIn = false;
 
+  $rootScope.$on('$routeChangeStart', function() {
+    $rootScope.showSearch = $location.path() !== '/';
+  });
+
   $http.post('/api/loggedIn').success(function (data) {
     if (data.email) {
       $rootScope.loggedIn = true;
@@ -36039,11 +36043,13 @@ myApp.controller('SignupController', ['$rootScope','$scope', '$http', '$location
 ;myApp.controller('SearchController', ['$scope', '$http', '$location', function($scope, $http, $location) {
 
   $scope.searchTypeahead = function (value) {
-    return $http.get("/products/search/"+value).then(function (response) {
-      return response.data.map(function(item){
-        return item.name;
+    if (value.length > 0) {
+      return $http.get("/products/search/" + value).then(function (response) {
+        return response.data.map(function (item) {
+          return item.name;
+        });
       });
-    });
+    }
   }
 
   $scope.search = function (query) {

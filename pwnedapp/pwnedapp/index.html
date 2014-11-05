@@ -9,7 +9,7 @@
     <link href='http://fonts.googleapis.com/css?family=Arimo:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/bootstrap.min.css"> <!-- load bootstrap css -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet/less" type="text/css" href="css/styles.less" /> <!-- load application css -->
     <link rel="stylesheet" href="css/animate.css"> <!-- animated css -->
 </head>
@@ -18,13 +18,15 @@
   <div class="navbar navbar-default" role="navigation">
     <div class="container-fluid">
       <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
         <a class="navbar-brand logo" href="/">PWNED</a>
+        <div class="navbar-search" ng-show="showSearch">
+          <form class="navbar-form" ng-controller="SearchController" ng-submit="search(query)">
+            <div class="form-group">
+              <input class="form-control search-box" type="text" placeholder="Search for another item" ng-model="query" typeahead="result for result in searchTypeahead($viewValue) | limitTo:10">
+            </div>
+            <button type="submit" class="btn btn-search"><i class="fa fa-search"></i></button>
+          </form>
+        </div>
       </div>
       <div class="navbar-collapse collapse">
         <div class="nav navbar-nav navbar-right auth">
