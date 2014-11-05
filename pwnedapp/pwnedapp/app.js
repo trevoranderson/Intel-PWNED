@@ -20,6 +20,17 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap']
       }]
     },
     controller: 'ProfileController'
+  }).when('/search', {
+    templateUrl: 'views/products/products.html',
+    resolve: {
+      products: ['$http', '$route', function ($http, $route) {
+        var query = $route.current.params.query;
+        return $http.get("/products/search/"+query).then(function (response) {
+          return response.data;
+        });
+      }]
+    },
+    controller: 'ProductsController'
   }).otherwise({
     templateUrl: 'views/home.html'
   });

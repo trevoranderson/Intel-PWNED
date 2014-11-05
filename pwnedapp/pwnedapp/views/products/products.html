@@ -1,0 +1,19 @@
+<div class="container-fluid">
+  <div class="products-container">
+    <div class="row">
+      <div class="col-md-6 col-md-pull-4 pull-right">
+        <div class="results-message">Displaying {{products.length}} result(s) for <span>{{query}}</span>.</div>
+        <div class="results">
+          <ul class="results-list">
+            <li ng-repeat="product in products">
+              {{product.name}}
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-2 sidebar">
+        Side bar
+      </div>
+    </div>
+  </div>
+</div>

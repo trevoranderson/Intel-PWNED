@@ -35950,6 +35950,17 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap']
       }]
     },
     controller: 'ProfileController'
+  }).when('/search', {
+    templateUrl: 'views/products/products.html',
+    resolve: {
+      products: ['$http', '$route', function ($http, $route) {
+        var query = $route.current.params.query;
+        return $http.get("/products/search/"+query).then(function (response) {
+          return response.data;
+        });
+      }]
+    },
+    controller: 'ProductsController'
   }).otherwise({
     templateUrl: 'views/home.html'
   });
@@ -36011,7 +36022,11 @@ myApp.controller('SignupController', ['$rootScope','$scope', '$http', '$location
       console.log('error');
     });
   };
-}]);;myApp.controller('ProfileController', ['$scope', '$http', '$location', '$cookies', 'profile', function($scope, $http, $location, $cookies, profile) {
+}]);;myApp.controller('ProductsController', ['$scope', '$route', 'products', function($scope, $route, products) {
+  $scope.products = products;
+  $scope.query = $route.current.params.query;
+}]);
+;myApp.controller('ProfileController', ['$scope', '$http', '$location', '$cookies', 'profile', function($scope, $http, $location, $cookies, profile) {
 
   if (!profile.data.user) {
     // User needs to log in
@@ -36021,7 +36036,7 @@ myApp.controller('SignupController', ['$rootScope','$scope', '$http', '$location
   $scope.user = profile.data.user;
 
 }]);
-;myApp.controller('SearchController', ['$scope', '$http', function($scope, $http) {
+;myApp.controller('SearchController', ['$scope', '$http', '$location', function($scope, $http, $location) {
 
   $scope.searchTypeahead = function (value) {
     return $http.get("/products/search/"+value).then(function (response) {
@@ -36031,4 +36046,7 @@ myApp.controller('SignupController', ['$rootScope','$scope', '$http', '$location
     });
   }
 
+  $scope.search = function (query) {
+    $location.path("/search").search({query: query});
+  }
 }]);

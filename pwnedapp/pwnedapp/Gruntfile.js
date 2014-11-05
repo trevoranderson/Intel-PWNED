@@ -36,8 +36,8 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: ['js/script.js', 'app.js', 'views/**/*.js', 'components/**/*.js'],
-      tasks: [ 'concat:bower', 'concat:dist', 'uglify:dist']
+      files: ['js/script.js', 'app.js', 'views/*.js', 'views/**/*.js','components/**/*.js'],
+      tasks: [ 'concat:bower', 'concat:dist']
     }
   });
 
@@ -48,7 +48,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', [
     'concat:bower',
     'concat:dist',
-    'uglify:dist',
+//    'uglify:dist',
     'watch'
   ]);
 
