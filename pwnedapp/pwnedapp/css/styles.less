@@ -6,15 +6,29 @@ body {
 .navbar {
   height: 50px;
 
+  .navbar-header {
+    width: 80%;
+
+    .navbar-search {
+      display: inline-block;
+      margin-left: 25px;
+
+      .search-box {
+        width: 450px;
+      }
+    }
+  }
+
   a.logo {
     font-family: 'Oswald', sans-serif;
     font-size: 38px;
-    color: #de0000;
+    color: #7b35ba;
     font-weight: 500;
+    display: inline-block;
   }
 
   a.logo:hover {
-    color: #ae0000 !important;
+    color: #58298b !important;
   }
 
   .auth {
@@ -39,11 +53,85 @@ body {
   .btn-search {
     font-family: 'Oswald', sans-serif;
     color: #fff;
-    background-color: #d9534f;
-    border-color: #d43f3a;
+    background-color: #7b35ba;
+    border-color: #732ba8;
 
     &:hover {
-      background-color: #c23a35;
+      background-color: #58298b;
+    }
+  }
+}
+
+//======== Products list
+
+.wrapper {
+  min-height:100%;
+}
+.products-container {
+  .sidebar {
+    background-color: #efe9f7;
+    top: 50px;
+    left: 0px;
+    bottom: 0px;
+    position: absolute;
+    padding-top: 15px;
+
+    h4 {
+      font-weight: 600;
+    }
+
+    .divider {
+      background-color: #8b79a3;
+      height: 1px;
+    }
+  }
+
+  .results-message {
+    font-size: 18px;
+
+    span {
+      font-weight: bold;
+      color: #7b35ba;
+    }
+  }
+
+  .results {
+    display: block;
+    margin-top: 25px;
+  }
+
+  .results-list {
+    list-style: none;
+    margin0left: 15px;
+
+    li {
+      width: 100%;
+      overflow: auto;
+      border-bottom: 1px solid #cacaca;
+      padding: 10px;
+
+      .image {
+        width: 100px;
+        height: 100px;
+        display: inline-block;
+        float: left;
+      }
+
+      .description {
+        display: inline-block;
+        margin-left: 20px;
+
+        .name {
+          font-size: 16px;
+          font-weight: bold;
+          color: #7b35ba;
+        }
+
+        .price {
+          font-size: 14px;
+          color: #a2a2a2;
+        }
+      }
     }
   }
 }

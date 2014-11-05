@@ -25,7 +25,7 @@ mongoose.connect(configDB.url, function (err) {
 
 require('./config/passport')(passport); // pass passport for configuration
 
-// set up our express applicatio
+// set up our express application
 app.use(morgan('dev')); // log every request to the console
 app.use(cookieParser()); // read cookies (needed for auth)
 app.use(bodyParser.json()); // get information from html forms
@@ -48,12 +48,6 @@ app.use(express.static(__dirname + '/public'));
 app.use('/', express.static(path.join(__dirname, '/')));
 
 // routes ======================================================================
-
-//////////////////////////////////////////////////////
-//  These need to be declared any other routes for
-// AngularJS Html5Mode compatibility (single page site)
-
-//////////////////////////////////////////////////////
 
 require('./routes/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
 

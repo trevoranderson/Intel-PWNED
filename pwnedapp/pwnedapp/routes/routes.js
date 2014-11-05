@@ -4,9 +4,7 @@ var fn = require('fn.js');
 var productDB = require('../models/product.js');
 var userDB = require('../models/user.js');
 module.exports = function (app, passport) {
-    app.get('/', function (req, res) {
-        res.sendfile('index.html');
-    });
+
     app.get('/products/search/:query', function (req, res) {
         productDB.find({ name: new RegExp(req.param("query"), 'i'), }).exec(function (err, products) {
             res.json(products);
@@ -176,6 +174,11 @@ module.exports = function (app, passport) {
             res.send({ email : req.user.email });
         }
     });
+
+  // Redirect other urls to single-page Angular app
+  app.get('/*', function (req, res) {
+    res.sendfile('index.html');
+  });
 
 };
 

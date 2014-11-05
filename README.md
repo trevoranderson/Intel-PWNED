@@ -21,17 +21,16 @@ Note: MongoDB must be running (see MongoDB Install guide).
 
 Make sure you are in `pwnedapp/pwnedapp`
 
-####2. Initialize the app
+####2. Initialize
 
-Run to `bower install` to install packages (you only need to do this once).
+1. Run `bower install`. **You only need to do this once to install packages.**
 
-Run `npm start`. This command automatically runs the following:
+2. Run `npm install`. **You only need to do this once to install dependencies.**
 
-  - `npm install`: Installs dependencies 
+####3. Start the app
 
-  - `node server.js`: Starts the server
-
-####3. View the app
+1. Run `grunt default` to concatenate and minify the Angular code and packages. This will also start watching for changes in these files, and will concat/uglify automatically again if code is changed.
+2. Run `node server.js` to start the server.
 
 In your browser, navigate to `http://localhost:8080/`
 
@@ -48,3 +47,5 @@ haven't 'modulized' yet.
 **/routes** contains routing functions (ex '/' is the root).
 
 **/views** contains partials
+
+**/components** contains components for the client-side

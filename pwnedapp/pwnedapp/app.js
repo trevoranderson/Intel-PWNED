@@ -3,7 +3,7 @@
 // TODO: merge with stuff in the /routes folder !
 
 // Declare app level module which depends on views, and components
-var myApp = angular.module('myApp', ['ngRoute', 'ngCookies']
+var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap']
 ).config(['$routeProvider', '$locationProvider',  function($routeProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
   $routeProvider.when('/login', {
@@ -20,11 +20,26 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies']
       }]
     },
     controller: 'ProfileController'
+  }).when('/search', {
+    templateUrl: 'views/products/products.html',
+    resolve: {
+      products: ['$http', '$route', function ($http, $route) {
+        var query = $route.current.params.query;
+        return $http.get("/products/search/"+query).then(function (response) {
+          return response.data;
+        });
+      }]
+    },
+    controller: 'ProductsController'
   }).otherwise({
     templateUrl: 'views/home.html'
   });
-}]).run(function($rootScope, $http, $location) {
+}]).run(['$rootScope', '$http', '$location', function($rootScope, $http, $location) {
   $rootScope.loggedIn = false;
+
+  $rootScope.$on('$routeChangeStart', function() {
+    $rootScope.showSearch = $location.path() !== '/';
+  });
 
   $http.post('/api/loggedIn').success(function (data) {
     if (data.email) {
@@ -38,4 +53,4 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies']
       $location.path('/');
     });
   }
-});
+}]);
