@@ -15,24 +15,17 @@ var cheerio = require('cheerio');
 var request = require('request');
 var async = require('async');
 
-var url = 'http://www.cvs.com';
-var globalHash = {};
-var numberOfRequests = 0;
+var SCRAPER_SITE = "CVS Pharmacy";
+var siteUrl = 'http://www.cvs.com';
+var TIME_BETWEEN_REQUESTS = 1000;
 
 var productQueue = [];
-
-var sendSyncedProductRequest = function(timeBetweenRequests) {
-    async.eachSeries(productQueue,
-        function (url, callback) {
-            getProductPage(url, function(){setTimeout(callback, timeBetweenRequests);});
-        },
-        function (err) {
-            console.log("Finished processing products");
-        });
-}
+var globalResultArr = [];
 
 // ==== Function declarations go here =====
 
+
+var numberOfRequests = 0;
 
 function incrementRequests(){
     numberOfRequests++;
@@ -49,8 +42,8 @@ function sendInitialRequest(inputUrl){
         $ = cheerio.load(body);
         console.log("Scraping categories:");
         $('#shop-flyout .sublevel-nav li').each(function(index){
-            if(index != 0){return;}
-            var nextLink = url + $(this).find('a').attr('href');
+            if(index != 2 && index != 9){return;}  //Excluding anythings that's not Beauty and Skin Care
+            var nextLink = siteUrl + $(this).find('a').attr('href');
             console.log("\t" + nextLink);
             scrapeCategoriesPage(nextLink);
         });
@@ -68,6 +61,22 @@ function waitTillDone(whenDone){
     }
 }
 
+var sendSyncedProductRequest = function(cb) {
+    async.eachSeries(productQueue,
+        function (url, callback) {
+            console.log("Getting " + url);
+            getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
+        },
+        function (err) {
+            if(err){
+                cb(err, null);
+            }
+            else{
+                cb(null , globalResultArr);
+            }
+        });
+}
+
 
 function scrapeCategoriesPage(inputUrl){
     incrementRequests();
@@ -82,7 +91,7 @@ function scrapeCategoriesPage(inputUrl){
             decrementRequests();
             return;
         }
-        scrapeCategoriesPage2(url + nextLink[1]);
+        scrapeCategoriesPage2(siteUrl + nextLink[1]);
         decrementRequests();
     });
 }
@@ -95,8 +104,7 @@ function scrapeCategoriesPage2(inputUrl){
 
         $ = cheerio.load(body);
         $('.refineStyleCatalog li').each(function(index){
-        //    if(index != 0){return;}
-            var nextLink = url + $(this).find('a').attr('href');
+            var nextLink = siteUrl + $(this).find('a').attr('href');
             var ind = nextLink.indexOf('?');
             if(ind != -1){
                 nextLink = nextLink.substring(0, ind);
@@ -133,7 +141,7 @@ function scrapeSingleCategoryPage(inputUrl, count){
         }
 
         selector.each(function(index){
-            var nextLink = url + $(this).find('a').attr('href');
+            var nextLink = siteUrl + $(this).find('a').attr('href');
             console.log("Product: " + nextLink);
             productQueue.push(nextLink);
         });
@@ -144,37 +152,66 @@ function scrapeSingleCategoryPage(inputUrl, count){
     });
 
 }
-function getProductPage(productUrl, callback) {
-    callback();
-    incrementRequests();
+
+function sendProductRequest(productUrl, cb) {
     request(productUrl, function (err, resp, body) {
         if (err)
             throw err;
+
         $ = cheerio.load(body);
         var a = $('#prodPricePanel .priceTable form table tr td.col2').text();
-        var name = $('.prodName').text();
+        var name = $('.prodName').text().replace("\r", "").replace("\n", "");
         var patt = /\$\d+.\d+/;
+        var imageUrl = siteUrl + $('.productImage img').attr('src');
+        var lastaccess = Date(Date.now()).toString();
+
+
         var res = a.match(patt);
         if (res == null){
             console.log ("PRICE NOT FOUND: " + productUrl);
+            cb("Price Not Found" + productUrl, null);
             decrementRequests();
             return;
         }
-        globalHash[name] = {"price": res[0]};
-        console.log(name + ": " + globalHash[name]["price"]);
-        decrementRequests();
+        var res = {
+                    name: name,
+                    price: res[0],
+                    imageurl: imageUrl,
+                    scraperParams: {
+                        site: SCRAPER_SITE,
+                        lastAccess: lastaccess
+                    }
+                  };
+        cb(null, res);
     });
 }
 
-/*
-var sendSyncedProductRequest2 = function(timeBtwnRequests){
-    productQueue.each(function(url){
-            getProductPage(url);
-            setTimeout(, timeBetweenRequests);
-        });
-}*/
-
-exports.scrape_cvs = function (timeBetweenRequests){
-    sendInitialRequest(url);
-    waitTillDone(function() {sendSyncedProductRequest(timeBetweenRequests)});
+//for synchronously sending a batch of product requests
+function getProductPage(productUrl, callback) {
+    sendProductRequest(productUrl, function(err, res){
+        if(err){
+            console.log(err);
+        }
+        else
+            globalResultArr.push(res);
+    });
+    callback();
 }
+
+//for just getting one product request
+function updateSingleProduct(productUrl, next){
+    sendProductRequest(productUrl, function(err, res){
+        if(err){
+            next(err, null);
+        }
+        else
+            next(null, res);
+    });
+}
+
+exports.scrapeAll = function (next){
+    sendInitialRequest(siteUrl);
+    waitTillDone(function() {sendSyncedProductRequest(next);});
+}
+
+exports.updateSingleProduct = updateSingleProduct;
