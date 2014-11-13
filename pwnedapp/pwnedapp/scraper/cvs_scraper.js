@@ -177,6 +177,7 @@ function sendProductRequest(productUrl, cb) {
                     name: name,
                     price: res[0],
                     imageurl: imageUrl,
+                    producturl: productUrl,
                     scraperParams: {
                         site: SCRAPER_SITE,
                         lastAccess: lastaccess
