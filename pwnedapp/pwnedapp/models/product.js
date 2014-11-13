@@ -5,6 +5,7 @@ var productSchema = mongoose.Schema({
     name: String,
     price: Number,
     imageurl: String,
+    producturl: String,
     scraperParams: {
         site: String,
         lastAccess: Date,
