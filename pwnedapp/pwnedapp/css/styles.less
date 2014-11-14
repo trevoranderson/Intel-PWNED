@@ -1,3 +1,7 @@
+@panel: #f2ebff;
+@logo: #7b35ba;
+@logo-dark: #542d8b;
+
 body {
   font-family: 'Arimo', sans-serif;
 }
@@ -22,45 +26,85 @@ body {
   a.logo {
     font-family: 'Oswald', sans-serif;
     font-size: 38px;
-    color: #7b35ba;
+    color: @logo;
     font-weight: 500;
     display: inline-block;
   }
 
   a.logo:hover {
-    color: #58298b !important;
+    color: @logo-dark !important;
   }
 
   .auth {
     line-height: 50px;
     vertical-align: middle;
   }
+
+  .btn-search {
+    font-size: 16px;
+  }
 }
 
 //======== Homepage
-.home-search {
-  margin-top: 100px;
-  text-align: center;
 
-  .navbar-form {
-    display:inline-block;
+.home-wrapper {
+  .home-search {
+    margin: 150px auto;
+    text-align: center;
+
+    .navbar-form {
+      display: inline-block;
+    }
+
+    .form-group input {
+      width: 500px;
+    }
+
+    .btn-search {
+      font-family: 'Oswald', sans-serif;
+      color: #fff;
+      background-color: @logo;
+      border-color: @logo-dark;
+
+      &:hover {
+        background-color: @logo-dark;
+      }
+    }
   }
 
-  .form-group input {
-    width: 500px;
+  .divider {
+    margin: 15px auto;
+    width: 95%;
+    position: relative;
+
+    .mask {
+      overflow: hidden;
+      height: 20px;
+      &:after {
+        content: '';
+        display: block;
+        margin: -25px auto 0;
+        width: 100%;
+        height: 25px;
+        border-radius: 125px / 12px;
+        box-shadow: 0 0 8px black;
+      }
+    }
   }
 
-  .btn-search {
-    font-family: 'Oswald', sans-serif;
-    color: #fff;
-    background-color: #7b35ba;
-    border-color: #732ba8;
+  .panel {
+    width: 90%;
+    margin: 0px auto;
 
-    &:hover {
-      background-color: #58298b;
+    .panel-heading {
+      background-color: #fafafa;
+      font-size: 16px;
+      font-weight: bold;
+      color: @logo;
     }
   }
 }
+
 
 //======== Products list
 
@@ -69,7 +113,7 @@ body {
 }
 .products-container {
   .sidebar {
-    background-color: #efe9f7;
+    background-color: @panel;
     top: 50px;
     left: 0px;
     bottom: 0px;
