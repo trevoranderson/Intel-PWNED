@@ -5,10 +5,13 @@ var productSchema = mongoose.Schema({
     name: String,
     price: Number,
     imageurl: String,
+    producturl: String,
     scraperParams: {
         site: String,
         lastAccess: Date,
-    }
+    },
+    overview: String,
+    ingredients: [String]
 });
 
 // create the model for users and expose it to our app
