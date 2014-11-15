@@ -35,7 +35,7 @@ function decrementRequests(){
 }
 
 /**
- * Give an inputURL it extracts the categories from that page and visits each of them.
+ * Given an inputURL it extracts the categories from that page and visits each of them.
  * Currently only consists of Beauty and Personal Care
  *
  * @param inputUrl URL containing the category list
@@ -58,7 +58,7 @@ function sendInitialRequest(inputUrl){
 }
 
 /**
- * Give a category url it will proceed to grab all the product urls and add them to a queue.
+ * Given a category url it will proceed to grab all the product urls and add them to a queue.
  * It will start scraping from the page parameter (set page=1 for to get all pages).
  * All product urls will be placed in a queue and WILL NOT be visited by this function.
  *
@@ -153,14 +153,40 @@ function sendProductRequest(productUrl, cb) {
         var price = $("[itemprop='price']").text();
         var imgUrl = $("[itemprop='image']").attr('src');
         var lastaccess = Date(Date.now()).toString();
+        var overview = "";
+        var ingredients = "";
 
-        //extract overview and ingredients
-        //var tab_selector = $("#collateral-tabs");
-        //var dt_selector = tab_selector.find("dt.tab");
-        //var dd_selector = tab_selector.find("dd.tab-container");
+        //extract tab section
+        var tab_selector = $("#collateral-tabs");
 
-        //var overview = "";
-        //var ingredients = "";
+        //if there is a tab section look for the overview and ingredients
+        if( tab_selector.length != 0 ) {
+            var dt_selector = tab_selector.find("dt.tab");              //tab names
+            var dd_selector = tab_selector.find("dd.tab-container");    //tab contents
+
+            dt_selector.each(function(index){
+                //if we found the overview section extract its corresponding text
+                if( $(this).text() == "Details" ) {
+                    if( index < dd_selector.length ) {
+                        var temp = $(dd_selector[index]).text();
+                        var truncate_index = temp.indexOf('\tvar');
+                        if( truncate_index >= 0 ) {
+                            overview = temp.substring(0, truncate_index).trim();
+                        } else {
+                            overview = temp;
+                        }
+                    }
+                } else if( $(this).text() == "Ingredients" ) {
+                    if( index < dd_selector.length ) {
+                        ingredients = ($(dd_selector[index]).text()).trim().split(',');
+                        var last = ingredients[ingredients.length-1];
+                        ingredients[ingredients.length-1] = last.substring(0, last.length-1);
+                    }
+                }
+            });
+        }
+
+        //split the ingredients into an array
 
         var res = {
                     name: name,
@@ -170,9 +196,9 @@ function sendProductRequest(productUrl, cb) {
                     scraperParams: {
                         site: SCRAPER_SITE,
                         lastAccess: lastaccess
-                    }
-                    //overview:
-                    //ingredients:
+                    },
+                    overview: overview,
+                    ingredients: ingredients
                   };
         cb(null, res);
     });
