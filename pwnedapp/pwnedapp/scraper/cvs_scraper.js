@@ -145,8 +145,8 @@ function sendProductRequest(productUrl, cb) {
         var res = a.match(patt);
         if (res == null){
             console.log ("PRICE NOT FOUND: " + productUrl);
-            cb("Price Not Found" + productUrl, null);
             decrementRequests();
+            cb(null, null);
             return;
         }
         var overview = removeExtraneousChars($('#prodDesc').text());
