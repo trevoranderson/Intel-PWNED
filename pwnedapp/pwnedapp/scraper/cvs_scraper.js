@@ -176,7 +176,8 @@ function getProductPage(productUrl, callback) {
             console.log(err);
         }
         else {
-            globalResultArr.push(res);
+            if(res)
+                globalResultArr.push(res);
             callback();
         }
     });
