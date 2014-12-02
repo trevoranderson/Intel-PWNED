@@ -17,7 +17,7 @@ var async = require('async');
 
 var SCRAPER_SITE = "CVS Pharmacy";
 var siteUrl = 'http://www.cvs.com';
-var TIME_BETWEEN_REQUESTS = 100;
+var TIME_BETWEEN_REQUESTS = 200;
 
 var productQueue = [];
 var globalResultArr = [];
@@ -77,7 +77,7 @@ function scrapeCategoriesPage2(inputUrl){
 
         $ = cheerio.load(body);
         $('.refineStyleCatalog li').each(function(index){
-			if(index != 0) {return;}
+		//	if(index != 0) {return;}
             var nextLink = siteUrl + $(this).find('a').attr('href');
             var ind = nextLink.indexOf('?');
             if(ind != -1){
@@ -120,7 +120,7 @@ function scrapeSingleCategoryPage(inputUrl, count){
         });
 
         //go to the next X products, where X is products per page
-        scrapeSingleCategoryPage(inputUrl, count+1);
+       scrapeSingleCategoryPage(inputUrl, count+1);
 
         decrementRequests();
     });
@@ -194,7 +194,8 @@ var sendSyncedProductRequest = function(cbSize, cb) {
             console.log("Getting " + url);
             getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
             if(cbSize && ((index % cbSize) === cbSize-1)){
-                cb(null, globalResultArr.slice(index-(cbSize -1), index));
+                cb(null, globalResultArr);
+                globalResultArr = [];
             }
             index++;
         },
@@ -202,8 +203,8 @@ var sendSyncedProductRequest = function(cbSize, cb) {
             if(err){
                 cb(err, null);
             }
-            else if(!cbSize)
-                    cb(null , globalResultArr);
+            else
+                cb(null , globalResultArr);
         });
 }
 
