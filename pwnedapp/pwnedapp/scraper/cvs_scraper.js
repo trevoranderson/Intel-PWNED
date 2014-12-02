@@ -14,6 +14,9 @@ Flow of program:
 var cheerio = require('cheerio');
 var request = require('request');
 var async = require('async');
+var configDB = require('../config/database.js');
+var mongoose = require('mongoose');
+var productDB = require('../models/product.js');
 
 var SCRAPER_SITE = "CVS Pharmacy";
 var siteUrl = 'http://www.cvs.com';
@@ -24,6 +27,9 @@ var globalResultArr = [];
 
 // ==== Function declarations go here =====
 
+mongoose.connect(configDB.url, function (err) {
+    console.log ("DB Connection Error" + err);
+}); // connect to our database
 
 var numberOfRequests = 0;
 
@@ -77,7 +83,7 @@ function scrapeCategoriesPage2(inputUrl){
 
         $ = cheerio.load(body);
         $('.refineStyleCatalog li').each(function(index){
-		//	if(index != 0) {return;}
+			if(index != 0) {return;}
             var nextLink = siteUrl + $(this).find('a').attr('href');
             var ind = nextLink.indexOf('?');
             if(ind != -1){
@@ -120,7 +126,7 @@ function scrapeSingleCategoryPage(inputUrl, count){
         });
 
         //go to the next X products, where X is products per page
-       scrapeSingleCategoryPage(inputUrl, count+1);
+       //scrapeSingleCategoryPage(inputUrl, count+1);
 
         decrementRequests();
     });
@@ -153,19 +159,34 @@ function sendProductRequest(productUrl, cb) {
         var ingredients = $('#prodIngd').text();
         ingredients = ingredients.substring(0, ingredients.indexOf('.'));  //bunch of unformatted junk after period
         var ingredientList = ingredients.split(',').map(removeExtraneousChars); //create list of ingredients
-        var res = {
-                    name: name,
-                    price: res[0],
-                    imageurl: imageUrl,
-                    producturl: productUrl,
-                    overview: overview,
-                    ingredients: ingredientList,
-                    scraperParams: {
-                        site: SCRAPER_SITE,
-                        lastAccess: lastaccess
-                    }
-                  };
-        cb(null, res);
+        
+        var p = {
+            name: name,
+            price: res[0],
+            imageurl: imageUrl,
+            producturl: productUrl,
+            overview: overview,
+            ingredients: ingredientList,
+            scraperParams: {
+                site: SCRAPER_SITE,
+                lastAccess: lastaccess
+            }
+          };
+
+          //JERRID: Insert new product into DB
+        var zz = new productDB();
+        zz.name = p.name;
+        zz.price = p.price.substring(1);
+        zz.imageurl = p.imageurl;
+        zz.producturl = p.producturl;
+        zz.overview = p.overview;
+        zz.ingredients = p.ingredients;
+        zz.scraperParams = p.scraperParams;
+        zz.save(function (err, fluffy) {
+          if (err) return console.error(err);
+          });   
+        //-------------     
+        cb(null, p);
     });
 }
 

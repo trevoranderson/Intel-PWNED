@@ -39,6 +39,7 @@ scraped.scrapeAll(30, function(err, result){
     console.log(result);
 });
 
+/*
 scraped.updateSingleProduct('http://www.cvs.com/shop/beauty/lips/lip-balm/almay-color-care-liquid-lip-balm-apple-a-day-300-skuid-921034', function(err, result){
     console.log(result);
-});
+});*/
