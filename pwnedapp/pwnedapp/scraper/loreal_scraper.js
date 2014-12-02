@@ -69,7 +69,7 @@ function scrapeCategoryPage(inputUrl){
             throw err;
         $ = cheerio.load(body);
         console.log("Scraping subcategories:");
-        $('.category li').each(function(index){
+        $('div.category li').each(function(index){
             var nextLink = siteUrl + $(this).find('a').attr('href');
             console.log("\t" + nextLink);
             scrapeSubCategoryPage(nextLink);
@@ -124,7 +124,7 @@ function waitTillDone(whenDone){
     }
 }
 
-var sendSyncedProductRequest = function(cb) {
+var sendSyncedProductRequest_old = function(cb) {
     async.eachSeries(productQueue,
         function (url, callback) {
             console.log("Getting " + url);
@@ -140,23 +140,54 @@ var sendSyncedProductRequest = function(cb) {
         });
 }
 
+var sendSyncedProductRequest = function(cbSize, cb) {
+    if(!cb){
+        cb = cbSize;
+        cbSize = null;
+    }
+    var index = 0;
+    async.eachSeries(productQueue,
+        function (url, callback) {
+            console.log("Getting " + url);
+            getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
+            if(cbSize && ((index % cbSize) === cbSize-1)){
+                cb(null, globalResultArr.slice(index-(cbSize -1), index));
+            }
+            index++;
+        },
+        function (err) {
+            if(err){
+                cb(err, null);
+            }
+            else if(!cbSize)
+                    cb(null , globalResultArr);
+        });
+}
+
 //for synchronously sending a batch of product requests
 function getProductPage(productUrl, callback) {
     sendProductRequest(productUrl, function(err, res){
         if(err){
             console.log(err);
         }
-        else
-            globalResultArr.push(res);
+        else {
+            if(res)
+                globalResultArr.push(res);
+            callback();
+        }
     });
-    callback();
 }
 
 
 function sendProductRequest(productUrl, cb) {
     request(productUrl, function (err, resp, body) {
-        if (err)
+        if (err) {
+            if( err.toString().indexOf("redirect loop") > -1 ) {
+                console.log("REDIRECT LOOP - OVERRIDING");
+                return cb(null, null);
+            }
             throw err;
+        }
 
         $ = cheerio.load(body);
         
@@ -205,15 +236,20 @@ function sendProductRequest(productUrl, cb) {
                     price: price,
                     imageurl: imgUrl,
                     producturl: productUrl,
+                    overview: overview,
+                    ingredients: ingredients,
                     scraperParams: {
                         site: SCRAPER_SITE,
                         lastAccess: lastaccess
-                    },
-                    overview: overview,
-                    ingredients: ingredients
+                    }
                   };
         cb(null, res);
     });
+}
+
+exports.scrapeAll = function (cbSize, cb){
+    sendInitialRequest(siteUrl);
+    waitTillDone(function() {sendSyncedProductRequest(cbSize, cb);});
 }
 
 //for just getting one product request
@@ -225,11 +261,6 @@ function updateSingleProduct(productUrl, next){
         else
             next(null, res);
     });
-}
-
-exports.scrapeAll = function (next){
-    sendInitialRequest(siteUrl);
-    waitTillDone(function() {sendSyncedProductRequest(next);});
 }
 
 exports.updateSingleProduct = updateSingleProduct;
