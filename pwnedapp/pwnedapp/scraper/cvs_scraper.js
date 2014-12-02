@@ -17,7 +17,7 @@ var async = require('async');
 
 var SCRAPER_SITE = "CVS Pharmacy";
 var siteUrl = 'http://www.cvs.com';
-var TIME_BETWEEN_REQUESTS = 1000;
+var TIME_BETWEEN_REQUESTS = 100;
 
 var productQueue = [];
 var globalResultArr = [];
@@ -51,33 +51,6 @@ function sendInitialRequest(inputUrl){
     });
 }
 
-function waitTillDone(whenDone){
-    if(numberOfRequests != 0){
-        console.log("Waiting for requests / Requests Remaining: " + numberOfRequests);
-        setTimeout(function(){waitTillDone(whenDone);}, 10000);
-    }
-    else {
-        whenDone();
-    }
-}
-
-var sendSyncedProductRequest = function(cb) {
-    async.eachSeries(productQueue,
-        function (url, callback) {
-            console.log("Getting " + url);
-            getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
-        },
-        function (err) {
-            if(err){
-                cb(err, null);
-            }
-            else{
-                cb(null , globalResultArr);
-            }
-        });
-}
-
-
 function scrapeCategoriesPage(inputUrl){
     incrementRequests();
     request(inputUrl, function (err, resp, body) {
@@ -104,6 +77,7 @@ function scrapeCategoriesPage2(inputUrl){
 
         $ = cheerio.load(body);
         $('.refineStyleCatalog li').each(function(index){
+			if(index != 0) {return;}
             var nextLink = siteUrl + $(this).find('a').attr('href');
             var ind = nextLink.indexOf('?');
             if(ind != -1){
@@ -135,7 +109,6 @@ function scrapeSingleCategoryPage(inputUrl, count){
         var selector = $('.innerBox .productSection1');
 
         if(selector.length == 0){
-            console.log("DOES DIS EVER HAPPEN");
             decrementRequests();
             return;
         }
@@ -146,6 +119,7 @@ function scrapeSingleCategoryPage(inputUrl, count){
             productQueue.push(nextLink);
         });
 
+        //go to the next X products, where X is products per page
         scrapeSingleCategoryPage(inputUrl, count+1);
 
         decrementRequests();
@@ -153,31 +127,39 @@ function scrapeSingleCategoryPage(inputUrl, count){
 
 }
 
+function removeExtraneousChars(input){
+    return input.replace(/\r/g, "").replace(/\n/g, "").replace(/\t/g, "").trim();
+}
 function sendProductRequest(productUrl, cb) {
     request(productUrl, function (err, resp, body) {
         if (err)
             throw err;
 
         $ = cheerio.load(body);
-        var a = $('#prodPricePanel .priceTable form table tr td.col2').text();
-        var name = $('.prodName').text().replace("\r", "").replace("\n", "");
+        var name = removeExtraneousChars($('.prodName').text());
         var patt = /\$\d+.\d+/;
         var imageUrl = siteUrl + $('.productImage img').attr('src');
         var lastaccess = Date(Date.now()).toString();
 
-
+        var a = $('#prodPricePanel .priceTable form table tr td.col2').text();
         var res = a.match(patt);
         if (res == null){
             console.log ("PRICE NOT FOUND: " + productUrl);
-            cb("Price Not Found" + productUrl, null);
             decrementRequests();
+            cb(null, null);
             return;
         }
+        var overview = removeExtraneousChars($('#prodDesc').text());
+        var ingredients = $('#prodIngd').text();
+        ingredients = ingredients.substring(0, ingredients.indexOf('.'));  //bunch of unformatted junk after period
+        var ingredientList = ingredients.split(',').map(removeExtraneousChars); //create list of ingredients
         var res = {
                     name: name,
                     price: res[0],
                     imageurl: imageUrl,
                     producturl: productUrl,
+                    overview: overview,
+                    ingredients: ingredientList,
                     scraperParams: {
                         site: SCRAPER_SITE,
                         lastAccess: lastaccess
@@ -193,11 +175,53 @@ function getProductPage(productUrl, callback) {
         if(err){
             console.log(err);
         }
-        else
-            globalResultArr.push(res);
+        else {
+            if(res)
+                globalResultArr.push(res);
+            callback();
+        }
     });
-    callback();
 }
+
+var sendSyncedProductRequest = function(cbSize, cb) {
+    if(!cb){
+        cb = cbSize;
+        cbSize = null;
+    }
+    var index = 0;
+    async.eachSeries(productQueue,
+        function (url, callback) {
+            console.log("Getting " + url);
+            getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
+            if(cbSize && ((index % cbSize) === cbSize-1)){
+                cb(null, globalResultArr.slice(index-(cbSize -1), index));
+            }
+            index++;
+        },
+        function (err) {
+            if(err){
+                cb(err, null);
+            }
+            else if(!cbSize)
+                    cb(null , globalResultArr);
+        });
+}
+
+function waitTillDone(whenDone){
+    if(numberOfRequests != 0){
+        console.log("Waiting for requests / Requests Remaining: " + numberOfRequests);
+        setTimeout(function(){waitTillDone(whenDone);}, 10000);
+    }
+    else {
+        whenDone();
+    }
+}
+
+exports.scrapeAll = function (cbSize, cb){
+    sendInitialRequest(siteUrl);
+    waitTillDone(function() {sendSyncedProductRequest(cbSize, cb);});
+}
+
 
 //for just getting one product request
 function updateSingleProduct(productUrl, next){
@@ -208,11 +232,6 @@ function updateSingleProduct(productUrl, next){
         else
             next(null, res);
     });
-}
-
-exports.scrapeAll = function (next){
-    sendInitialRequest(siteUrl);
-    waitTillDone(function() {sendSyncedProductRequest(next);});
 }
 
 exports.updateSingleProduct = updateSingleProduct;
