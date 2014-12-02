@@ -13,7 +13,11 @@ Initialization:
 
 Interface:
     scrapeAll(next)
+    ** OPTIONAL: scrapeAll(cbSize, next) where cbSize specifies to return results in chunks of cbSize **
     updateSingleProd(productUrl, next)
+
+
+
 Usage:
 
     - results is an array of entries following db schema
@@ -31,10 +35,10 @@ updateSingleProd(productUrl, function next(err, result){
 */
 
 var scraped = require('./cvs_scraper');
-scraped.scrapeAll(function(err, result){
+scraped.scrapeAll(30, function(err, result){
     console.log(result);
 });
 
-scraped.updateSingleProduct('http://www.cvs.com/shop/beauty/eyes/eye-shadow/milani-shadow-singles-bella-chiffon-skuid-967395', function(err, result){
+scraped.updateSingleProduct('http://www.cvs.com/shop/beauty/lips/lip-balm/almay-color-care-liquid-lip-balm-apple-a-day-300-skuid-921034', function(err, result){
     console.log(result);
 });
