@@ -195,7 +195,7 @@ module.exports = function (app, passport) {
         }
     });
     
-    app.get('/', function (req, res) {
+    app.get('/*', function (req, res) {
         res.sendfile('index.html');
     });
 

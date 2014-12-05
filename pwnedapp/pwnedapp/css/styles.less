@@ -2,6 +2,8 @@
 @logo: #7b35ba;
 @logo-dark: #542d8b;
 
+html,body { height:100%; }
+
 body {
   font-family: 'Arimo', sans-serif;
 }
@@ -119,6 +121,7 @@ body {
     bottom: 0px;
     position: absolute;
     padding-top: 15px;
+    min-height: 100%;
 
     h4 {
       font-weight: 600;
@@ -146,13 +149,23 @@ body {
 
   .results-list {
     list-style: none;
-    margin0left: 15px;
+    margin-left: 15px;
 
     li {
       width: 100%;
       overflow: auto;
       border-bottom: 1px solid #cacaca;
       padding: 10px;
+      position: relative;
+
+      .name {
+        margin-left: 20px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #7b35ba;
+        width: 80%;
+        display: inline-block;
+      }
 
       .image {
         width: 100px;
@@ -164,17 +177,18 @@ body {
       .description {
         display: inline-block;
         margin-left: 20px;
-
-        .name {
-          font-size: 16px;
-          font-weight: bold;
-          color: #7b35ba;
-        }
+        width: 80%;
 
         .price {
           font-size: 14px;
           color: #a2a2a2;
         }
+      }
+
+      .merchant {
+        position: absolute;
+        right: 0px;
+        top: 10px;
       }
     }
   }

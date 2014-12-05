@@ -22,7 +22,7 @@
         <div class="navbar-search" ng-show="showSearch">
           <form class="navbar-form" ng-controller="SearchController" ng-submit="search(query)">
             <div class="form-group">
-              <input class="form-control search-box" type="text" ng-model="query" typeahead="result for result in searchTypeahead($viewValue) | limitTo:10">
+              <input class="form-control search-box" placeholder="" type="text" ng-model="query" typeahead="result for result in searchTypeahead($viewValue) | limitTo:10">
             </div>
             <button type="submit" class="btn btn-search"><i class="fa fa-search"></i></button>
           </form>
@@ -30,8 +30,8 @@
       </div>
       <div class="navbar-collapse collapse">
         <div class="nav navbar-nav navbar-right auth">
-          <a href="/login" ng-if="!loggedIn" class="btn btn-default"><span class="fa fa-user"></span> Local Login</a>
-          <a href="/signup" ng-if="!loggedIn" class="btn btn-default"><span class="fa fa-user"></span> Local Signup</a>
+          <a href="/login" ng-if="!loggedIn" class="btn btn-default"><span class="fa fa-user"></span> Login</a>
+          <a href="/signup" ng-if="!loggedIn" class="btn btn-default"><span class="fa fa-user"></span> Signup</a>
           <a href="/profile" ng-if="loggedIn" class="btn btn-default"><span class="fa fa-user"></span> View Profile</a>
           <a ng-click="logout()" ng-if="loggedIn" class="btn btn-default"> Logout</a>
         </div>

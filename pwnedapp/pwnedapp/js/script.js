@@ -35950,6 +35950,16 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap']
       }]
     },
     controller: 'ProfileController'
+  }).when('/item/:id', {
+    templateUrl: 'views/product/product.html',
+    resolve: {
+      product: ['$http', '$route', function ($http, $route, $stateParams) {
+        return $http.get("/products/"+$stateParams.id).then(function (response) {
+          return response.data;
+        });
+      }]
+    },
+    controller: 'ProductController'
   }).when('/search', {
     templateUrl: 'views/products/products.html',
     resolve: {
@@ -36026,9 +36036,37 @@ myApp.controller('SignupController', ['$rootScope','$scope', '$http', '$location
       console.log('error');
     });
   };
-}]);;myApp.controller('ProductsController', ['$scope', '$route', 'products', function($scope, $route, products) {
+}]);;myApp.controller('ProductController', ['$scope', '$route', 'products', function($scope, $route, products) {
   $scope.products = products;
   $scope.query = $route.current.params.query;
+  $scope.totalItems = $scope.products.length;
+  $scope.currentPage = 1;
+  $scope.maxSize = 5;
+  $scope.indexMin = 0
+  $scope.indexMax = 9;
+
+  var maxPage = 5; // Fetch results from maxPage-5 to maxPage
+
+  $scope.pageChanged = function() {
+    $scope.indexMin = ($scope.currentPage - 1) * 10;
+    $scope.indexMax = ($scope.currentPage * 10) - 1;
+  }
+}]);
+;myApp.controller('ProductsController', ['$scope', '$route', 'products', function($scope, $route, products) {
+  $scope.products = products;
+  $scope.query = $route.current.params.query;
+  $scope.totalItems = $scope.products.length;
+  $scope.currentPage = 1;
+  $scope.maxSize = 5;
+  $scope.indexMin = 0
+  $scope.indexMax = 9;
+
+  var maxPage = 5; // Fetch results from maxPage-5 to maxPage
+
+  $scope.pageChanged = function() {
+    $scope.indexMin = ($scope.currentPage - 1) * 10;
+    $scope.indexMax = ($scope.currentPage * 10) - 1;
+  }
 }]);
 ;myApp.controller('ProfileController', ['$scope', '$http', '$location', '$cookies', 'profile', function($scope, $http, $location, $cookies, profile) {
 
@@ -36055,4 +36093,22 @@ myApp.controller('SignupController', ['$rootScope','$scope', '$http', '$location
   $scope.search = function (query) {
     $location.path("/search").search({query: query});
   }
-}]);
+}]);;myApp.filter('cut', function () {
+  return function (value, wordwise, max, tail) {
+    if (!value) return '';
+
+    max = parseInt(max, 10);
+    if (!max) return value;
+    if (value.length <= max) return value;
+
+    value = value.substr(0, max);
+    if (wordwise) {
+      var lastspace = value.lastIndexOf(' ');
+      if (lastspace != -1) {
+        value = value.substr(0, lastspace);
+      }
+    }
+
+    return value + (tail || ' …');
+  };
+});

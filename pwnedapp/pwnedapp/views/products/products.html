@@ -1,33 +1,40 @@
 <div class="container-fluid">
   <div class="products-container">
     <div class="row">
-      <div class="col-md-6 col-md-pull-4 pull-right">
-        <div class="results-message">Displaying {{products.length}} result(s) for <span>{{query}}</span>.</div>
+      <div class="col-md-6 pull-left">
+        <div class="results-message">Displaying {{indexMin + 1}}-{{indexMax+1}} of {{products.length}} result(s) for <span>{{query}}</span>.</div>
         <div class="results">
           <ul class="results-list">
-            <li class="product" ng-repeat="product in products">
-              <img class="image" src="{{product.imageurl}}"/>
+            <li class="product" ng-repeat="product in products" ng-show="$index <= indexMax && $index >= indexMin">
+              <a ng-href="/item/{{product._id}}"><img class="image" src="{{product.imageurl}}"/></a>
+              <div class="name">{{product.name | cut:true:70:' ...'}}</div>
               <div class="description">
-                <span class="name">{{product.name}}</span>
                 <p class="price">Starting from {{product.price}}</p>
+                <p>
+                  {{product.overview | cut:true:170:' ...'}}
+                </p>
+              </div>
+              <div class="merchant">
+                {{product.scraperParams.site}}
               </div>
             </li>
           </ul>
+          <pagination total-items="totalItems" ng-model="currentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" ng-change="pageChanged()"></pagination>
         </div>
       </div>
-      <div class="col-md-2 sidebar">
-        <h4>Show results for</h4>
-        <p>
-          Categories list goes here<br/>
-          Users can filter by category
-        </p>
-        <hr class="divider"/>
-        <h4>Merchants</h4>
-        <p>
-          Store list goes here<br/>
-          Users can filter by store
-        </p>
-      </div>
+      <!--<div class="col-md-2 sidebar">-->
+        <!--<h4>Show results for</h4>-->
+        <!--<p>-->
+          <!--Categories list goes here<br/>-->
+          <!--Users can filter by category-->
+        <!--</p>-->
+        <!--<hr class="divider"/>-->
+        <!--<h4>Merchants</h4>-->
+        <!--<p>-->
+          <!--Store list goes here<br/>-->
+          <!--Users can filter by store-->
+        <!--</p>-->
+      <!--</div>-->
     </div>
   </div>
 </div>
