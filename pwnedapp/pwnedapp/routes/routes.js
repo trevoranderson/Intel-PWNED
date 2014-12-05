@@ -14,14 +14,39 @@ module.exports = function (app, passport) {
                 return proj.product;
             },
             fn.map(function (p) {
-                    return {
-                        product: p,
-                        index: regQuery.exec(p.name).index,
-                    };
-                }, products)
+                return {
+                    product: p,
+                    index: regQuery.exec(p.name).index,
+                };
+            }, products)
             .sort(function (a, b) {
-                        return (a.index < b.index) ? -1: 1;
-                    })
+                return (a.index < b.index) ? -1: 1;
+            })
+            );
+            if (req.query.first && req.query.last) {
+                res.json(ret.slice(req.query.first, req.query.last));
+            } 
+            else {
+                res.json(ret);
+            }
+        });
+    });
+    app.get('/products/search/:merchant/:query', function (req, res) {
+        var regQuery = new RegExp(req.param("query"), 'i')
+        var merchant = new RegExp(req.param("merchant"), 'i');
+        productDB.find({ name: regQuery, "scraperParams.site": merchant }).exec(function (err, products) {
+            var ret = fn.map(function (proj) {
+                return proj.product;
+            },
+            fn.map(function (p) {
+                return {
+                    product: p,
+                    index: regQuery.exec(p.name).index,
+                };
+            }, products)
+            .sort(function (a, b) {
+                return (a.index < b.index) ? -1: 1;
+            })
             );
             if (req.query.first && req.query.last) {
                 res.json(ret.slice(req.query.first, req.query.last));
@@ -67,10 +92,10 @@ module.exports = function (app, passport) {
                 _id: { $in: user.watchlist }
             }, function (err, products) {
                 res.json(fn.map(function (pId) {
-                        return fn.filter(function (p) {
-                            return p.id === pId;
-                        }, products)[0];
-                    }, user.watchlist));
+                    return fn.filter(function (p) {
+                        return p.id === pId;
+                    }, products)[0];
+                }, user.watchlist));
             });
         });
     });
