@@ -35934,7 +35934,7 @@ angular.module("ui.bootstrap",["ui.bootstrap.tpls","ui.bootstrap.transition","ui
 
 // Declare app level module which depends on views, and components
 var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap']
-).config(['$routeProvider', '$locationProvider',  function($routeProvider, $locationProvider) {
+).config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
   $routeProvider.when('/login', {
     templateUrl: 'views/auth/login.ejs',
@@ -35953,8 +35953,8 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap']
   }).when('/item/:id', {
     templateUrl: 'views/product/product.html',
     resolve: {
-      product: ['$http', '$route', function ($http, $route, $stateParams) {
-        return $http.get("/products/"+$stateParams.id).then(function (response) {
+      product: ['$http', '$route', function ($http, $route) {
+        return $http.get("/products/"+$route.current.params.id).then(function (response) {
           return response.data;
         });
       }]
@@ -36036,21 +36036,8 @@ myApp.controller('SignupController', ['$rootScope','$scope', '$http', '$location
       console.log('error');
     });
   };
-}]);;myApp.controller('ProductController', ['$scope', '$route', 'products', function($scope, $route, products) {
-  $scope.products = products;
-  $scope.query = $route.current.params.query;
-  $scope.totalItems = $scope.products.length;
-  $scope.currentPage = 1;
-  $scope.maxSize = 5;
-  $scope.indexMin = 0
-  $scope.indexMax = 9;
-
-  var maxPage = 5; // Fetch results from maxPage-5 to maxPage
-
-  $scope.pageChanged = function() {
-    $scope.indexMin = ($scope.currentPage - 1) * 10;
-    $scope.indexMax = ($scope.currentPage * 10) - 1;
-  }
+}]);;myApp.controller('ProductController', ['$scope', '$route', 'product', function($scope, $route, product) {
+  $scope.product = product;
 }]);
 ;myApp.controller('ProductsController', ['$scope', '$route', 'products', function($scope, $route, products) {
   $scope.products = products;
@@ -36082,7 +36069,7 @@ myApp.controller('SignupController', ['$rootScope','$scope', '$http', '$location
 
   $scope.searchTypeahead = function (value) {
     if (value.length > 0) {
-      return $http.get("/products/search/" + value).then(function (response) {
+      return $http.get("/products/search/" + value + "?first=0&last=10").then(function (response) {
         return response.data.map(function (item) {
           return item.name;
         });

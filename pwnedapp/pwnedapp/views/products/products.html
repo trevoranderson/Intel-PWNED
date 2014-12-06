@@ -6,10 +6,10 @@
         <div class="results">
           <ul class="results-list">
             <li class="product" ng-repeat="product in products" ng-show="$index <= indexMax && $index >= indexMin">
-              <a ng-href="/item/{{product._id}}"><img class="image" src="{{product.imageurl}}"/></a>
-              <div class="name">{{product.name | cut:true:70:' ...'}}</div>
+              <a ng-href="/item/{{product._id}}" target="_self"><img class="image" src="{{product.imageurl}}"/></a>
+              <div class="name"><a ng-href="/item/{{product._id}}" target="_self">{{product.name | cut:true:70:' ...'}}</a></div>
               <div class="description">
-                <p class="price">Starting from {{product.price}}</p>
+                <p class="price">{{product.price}}</p>
                 <p>
                   {{product.overview | cut:true:170:' ...'}}
                 </p>

@@ -25,10 +25,10 @@ body {
     }
   }
 
-  a.logo {
+  .logo {
     font-family: 'Oswald', sans-serif;
     font-size: 38px;
-    color: @logo;
+    color: @logo !important;
     font-weight: 500;
     display: inline-block;
   }
@@ -190,6 +190,78 @@ body {
         right: 0px;
         top: 10px;
       }
+    }
+  }
+}
+
+//===== Product page
+
+.product-container {
+  margin: 0 20px;
+
+  .name {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .image {
+    min-width: 100px;
+    min-height: 100px;
+    max-width: 200px;
+    max-height: 200px;
+  }
+
+  .image-container {
+    float:left;
+    margin-top: 10px;
+    display: inline-block;
+    width: 20%;
+  }
+
+  .actions {
+    margin: 25px 0px;
+    display: block;
+
+    .btn {
+      margin: 5px 0;
+
+      .fa {
+        margin-right: 7px;
+      }
+    }
+
+    .btn-primary {
+      background-color: @logo;
+      border-color: @logo-dark;
+    }
+
+    .btn-primary:hover {
+      background-color: @logo-dark;
+    }
+
+    .watch-options {
+      display: block;
+    }
+  }
+
+  .description {
+    float:left;
+    width: 79%;
+    display: inline-block;
+    vertical-align: top;
+
+    .price {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .tab {
+      margin: 10px;
+    }
+
+    .merchant {
+      font-size: 14px;
     }
   }
 }

@@ -4,7 +4,7 @@
 
 // Declare app level module which depends on views, and components
 var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap']
-).config(['$routeProvider', '$locationProvider',  function($routeProvider, $locationProvider) {
+).config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
   $routeProvider.when('/login', {
     templateUrl: 'views/auth/login.ejs',
@@ -23,8 +23,8 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap']
   }).when('/item/:id', {
     templateUrl: 'views/product/product.html',
     resolve: {
-      product: ['$http', '$route', function ($http, $route, $stateParams) {
-        return $http.get("/products/"+$stateParams.id).then(function (response) {
+      product: ['$http', '$route', function ($http, $route) {
+        return $http.get("/products/"+$route.current.params.id).then(function (response) {
           return response.data;
         });
       }]
