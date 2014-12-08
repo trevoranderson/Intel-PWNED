@@ -6,6 +6,11 @@ var userDB = require('../models/user.js');
 var scraper = require('../scraper/cvs_scraper.js');
 var lazy = require('lazy.js');
 module.exports = function (app, passport) {
+    // Index
+    app.get('/', function (req, res) {
+        res.sendfile('index.html');
+    });
+
     // Support server side slicing with ?first=NUMBER&last=NUMBER
     app.get('/products/search/:query', function (req, res) {
         var regQuery = new RegExp(req.param("query"), 'i')
@@ -106,7 +111,7 @@ module.exports = function (app, passport) {
             if (err || !product) {
                 res.json({
                     status: "error",
-                    description: "product with id: " + pId + " not found",
+                    description: "product with id: " + pId + " not found"
                 });
                 return;
             }
@@ -220,7 +225,7 @@ module.exports = function (app, passport) {
         }
     });
     
-    app.get('/*', function (req, res) {
+    app.get('*', function (req, res) {
         res.sendfile('index.html');
     });
 

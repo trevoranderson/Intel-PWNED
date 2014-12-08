@@ -3,7 +3,7 @@
 // TODO: merge with stuff in the /routes folder !
 
 // Declare app level module which depends on views, and components
-var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap']
+var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ngAnimate']
 ).config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
   $routeProvider.when('/login', {
@@ -13,7 +13,7 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap']
     templateUrl: 'views/auth/signup.ejs',
     controller: 'SignupController'
   }).when('/profile', {
-    templateUrl: 'views/profile/profile.ejs',
+    templateUrl: 'views/profile/profile.html',
     resolve: {
       profile: ['$http', function ($http) {
         return $http.post('/profile');

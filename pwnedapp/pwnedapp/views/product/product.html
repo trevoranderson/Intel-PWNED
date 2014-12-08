@@ -12,7 +12,8 @@
      <div class="actions">
       <a type="button" class="btn btn-primary btn-lg" ng-href="{{product.producturl}}" target="_blank"><i class="fa fa-shopping-cart"></i> Buy Now</a>
       <div class="watch-options">
-       <a type="button" class="btn btn-success watch" ng-href="{{product.producturl}}" target="_blank"><i class="fa fa-eye"></i> Add to Watch List</a>
+       <a type="button" class="btn btn-success watch" ng-if="loggedIn && !inWatchList" ng-click="watchItem()"><i class="fa fa-eye"></i> Watch Item</a>
+       <a type="button" class="btn btn-danger watch" ng-if="loggedIn && inWatchList" ng-click="unWatchItem()"><i class="fa fa-eye-slash"></i> Un-Watch Item</a>
       </div>
      </div>
      <tabset>

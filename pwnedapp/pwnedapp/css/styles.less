@@ -20,7 +20,7 @@ body {
       margin-left: 25px;
 
       .search-box {
-        width: 450px;
+        width: 90%;
       }
     }
   }
@@ -40,6 +40,7 @@ body {
   .auth {
     line-height: 50px;
     vertical-align: middle;
+    margin-right: 0px !important;
   }
 
   .btn-search {
@@ -59,7 +60,7 @@ body {
     }
 
     .form-group input {
-      width: 500px;
+      width: 90%;
     }
 
     .btn-search {
@@ -265,3 +266,105 @@ body {
     }
   }
 }
+
+//==== Profile
+
+.profile-container {
+  padding: 15px;
+
+  .panel {
+    padding: 15px;
+  }
+
+  .acnt-header {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .watchlist {
+    min-height: 400px;
+
+    .no-items {
+      font-size: 16px;
+    }
+
+    .watchlist-header {
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+
+    .no-items {
+      margin: 15px 0;
+    }
+
+    .panel {
+      margin-left: 20px;
+      min-height: 180px;
+      box-sizing: border-box;
+
+      .image-container {
+        display: inline-block;
+        float: left;
+        width: 100px;
+        height: 100px;
+        margin-right: 10px;
+        padding: 0px;
+      }
+
+      .name {
+        font-size: 18px;
+      }
+
+      .price {
+        font-size: 16px;
+      }
+
+    }
+  }
+
+
+}
+
+.divider-vertical {
+  display:inline-block;
+  margin-right: 10px;
+  width: 15px;
+  position:relative;
+  float: left;
+  min-height: 400px;
+
+  .mask {
+    height: 400px;
+    overflow:hidden; width:20px;
+  }
+  &.left .mask:after {
+    content:'';
+    display:block; margin-left:-20px;
+    width:20px; height:100%;
+    border-radius:12px / 125px;
+    box-shadow:0 0 8px black;
+  }
+  &.right .mask:before {
+    content:'';
+    display:block; margin-left:20px;
+    width:20px; height:100%;
+    border-radius:12px / 125px;
+    box-shadow:0 0 8px black;
+  }
+}
+
+//.my-animation {
+//  opacity: 1;
+//}
+//
+//.my-animation.ng-hide {
+//  opacity: 0;
+//}
+//
+//.my-animation.ng-hide-add,
+//.my-animation.ng-hide-remove {
+//  -webkit-transition: 0.5s linear all;
+//  transition: 0.5s linear all;
+//}
