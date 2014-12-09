@@ -36409,7 +36409,7 @@ myApp.controller('SignupController', ['$rootScope','$scope', '$http', '$location
 
   // Determine if item is being watched
   $http.get("/watchlist").then(function (response) {
-    if (response.data.length > 0) {
+    if (response.data.length > 0 && response.data.indexOf(product) > -1) {
       $scope.inWatchList = true;
     }
   });

@@ -8,9 +8,22 @@ body {
   font-family: 'Arimo', sans-serif;
 }
 
+.content {
+  -webkit-transition: 0.15s;
+}
+
+.content.ng-enter {
+  opacity: 0;
+}
+
+.content.ng-leave.ng-leave-active {
+  opacity: 0;
+}
+
 //======== Navbar
 .navbar {
   height: 50px;
+  margin-bottom: 0;
 
   .navbar-header {
     width: 80%;
@@ -51,16 +64,39 @@ body {
 //======== Homepage
 
 .home-wrapper {
+
   .home-search {
-    margin: 150px auto;
+    height: 500px;
     text-align: center;
+    background: url(/images/beauty.jpg) no-repeat center center scroll;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    margin: 0;
+
+    .search-content {
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+
+      .message {
+        display: inline-block;
+        margin: 0 auto;
+        font-size: 30px;
+        color: #fff;
+        background-color: rgba(0,0,0,0.6);
+        padding: 10px;
+      }
+    }
 
     .navbar-form {
-      display: inline-block;
+      display: block;
+      text-shadow: 2px 2px #ff0000;
     }
 
     .form-group input {
-      width: 90%;
+      width: 450px;
     }
 
     .btn-search {
@@ -76,8 +112,8 @@ body {
   }
 
   .divider {
-    margin: 15px auto;
-    width: 95%;
+    margin: 0px auto 15px auto;
+    width: 100%;
     position: relative;
 
     .mask {
@@ -355,16 +391,22 @@ body {
   }
 }
 
-//.my-animation {
-//  opacity: 1;
-//}
-//
-//.my-animation.ng-hide {
-//  opacity: 0;
-//}
-//
-//.my-animation.ng-hide-add,
-//.my-animation.ng-hide-remove {
-//  -webkit-transition: 0.5s linear all;
-//  transition: 0.5s linear all;
-//}
+.watched-item {
+  -webkit-transition: 0.5s;
+}
+
+.watched-item.ng-enter {
+  opacity: 0;
+}
+
+.watched-item.ng-leave {
+  opacity: 1;
+}
+
+.watched-item.ng-enter.ng-enter-active {
+  opacity: 1;
+}
+
+.watched-item.ng-leave.ng-leave-active {
+  opacity: 0;
+}

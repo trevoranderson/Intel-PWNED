@@ -14,8 +14,8 @@
         <div class="mask"></div>
       </div>
       <div class="watchlist-header">Your Watched Items</div>
-      <div class="no-items" ng-if="watchlist.length < 1">You are currently not watching any items.</div>
-      <div class="panel panel-default" ng-repeat="product in watchlist" ng-animate>
+      <div class="no-items watched-item" ng-if="watchlist.length < 1">You are currently not watching any items.</div>
+      <div class="panel panel-default animation" ng-repeat="product in watchlist">
           <div class="image-container">
             <a ng-href="/item/{{product._id}}"><img class="image" height="150px" src="{{product.imageurl}}"/></a>
           </div>
