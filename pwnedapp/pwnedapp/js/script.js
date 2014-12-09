@@ -36339,7 +36339,8 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ng
     },
     controller: 'ProductsController'
   }).otherwise({
-    templateUrl: 'views/home.html'
+    templateUrl: 'views/home/home.html',
+    controller: 'HomeController'
   });
 }]).run(['$rootScope', '$http', '$location', function($rootScope, $http, $location) {
   $rootScope.loggedIn = false;
@@ -36403,9 +36404,39 @@ myApp.controller('SignupController', ['$rootScope','$scope', '$http', '$location
       console.log('error');
     });
   };
-}]);;myApp.controller('ProductController', ['$scope', '$route', '$http', 'product', function($scope, $route, $http, product) {
+}]);;myApp.controller('HomeController', ['$rootScope', '$scope', '$http', function($rootScope, $scope, $http) {
+  $scope.watchlist = [];
+  $scope.recentlyViewed = angular.fromJson(window.localStorage['recentlyViewed']);
+
+  if ($rootScope.loggedIn) {
+    $http.get("/watchlist").then(function (response) {
+      $scope.watchlist = response.data;
+    }, function (err) {
+      console.log(err);
+    });
+  }
+}]);
+;myApp.controller('ProductController', ['$scope', '$route', '$http', 'product', function($scope, $route, $http, product) {
   $scope.product = product;
   $scope.inWatchList = false;
+
+  if (window.localStorage['recentlyViewed']) {
+    var recentlyViewed = angular.fromJson(window.localStorage['recentlyViewed']);
+  } else {
+    var recentlyViewed = [];
+  }
+
+  var ids = recentlyViewed.map(function (product) {
+    return product._id;
+  });
+
+  if(ids.indexOf(product._id) < 0 ) {
+    if (recentlyViewed.length >= 6) {
+      recentlyViewed.splice(0,1);
+    }
+    recentlyViewed.push(product);
+    window.localStorage['recentlyViewed'] = JSON.stringify(recentlyViewed);
+  }
 
   // Determine if item is being watched
   $http.get("/watchlist").then(function (response) {

@@ -42,7 +42,8 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ng
     },
     controller: 'ProductsController'
   }).otherwise({
-    templateUrl: 'views/home.html'
+    templateUrl: 'views/home/home.html',
+    controller: 'HomeController'
   });
 }]).run(['$rootScope', '$http', '$location', function($rootScope, $http, $location) {
   $rootScope.loggedIn = false;

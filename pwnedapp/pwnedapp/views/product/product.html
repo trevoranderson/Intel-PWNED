@@ -1,31 +1,29 @@
-<div class="container-fluid">
- <div class="product-container">
-  <div class="row">
-   <div class="col-md-8 col-sm-10">
-    <div class="image-container">
-     <img class="image" src="{{product.imageurl}}"/>
-    </div>
-    <div class="description">
-     <div class="name">{{product.name}}</div>
-     <p class="price">{{product.price}}</p>
-     <p class="merchant">Sold by {{product.scraperParams.site}}</p>
-     <div class="actions">
-      <a type="button" class="btn btn-primary btn-lg" ng-href="{{product.producturl}}" target="_blank"><i class="fa fa-shopping-cart"></i> Buy Now</a>
-      <div class="watch-options">
-       <a type="button" class="btn btn-success watch" ng-if="loggedIn && !inWatchList" ng-click="watchItem()"><i class="fa fa-eye"></i> Watch Item</a>
-       <a type="button" class="btn btn-danger watch" ng-if="loggedIn && inWatchList" ng-click="unWatchItem()"><i class="fa fa-eye-slash"></i> Un-Watch Item</a>
-      </div>
+<div class="product-container">
+ <div class="row">
+  <div class="col-lg-pull-2 col-lg-8 pull-left col-md-8 col-sm-10">
+   <div class="image-container">
+    <img class="image" src="{{product.imageurl}}"/>
+   </div>
+   <div class="description">
+    <div class="name">{{product.name}}</div>
+    <p class="price">{{product.price}}</p>
+    <p class="merchant">Sold by {{product.scraperParams.site}}</p>
+    <div class="actions">
+     <a type="button" class="btn btn-primary btn-lg" ng-href="{{product.producturl}}" target="_blank"><i class="fa fa-shopping-cart"></i> Buy Now</a>
+     <div class="watch-options">
+      <a type="button" class="btn btn-success watch" ng-if="loggedIn && !inWatchList" ng-click="watchItem()"><i class="fa fa-eye"></i> Watch Item</a>
+      <a type="button" class="btn btn-danger watch" ng-if="loggedIn && inWatchList" ng-click="unWatchItem()"><i class="fa fa-eye-slash"></i> Un-Watch Item</a>
      </div>
-     <tabset>
-      <tab heading="Description">
-       <p class="tab">{{product.overview}}</p>
-      </tab>
-      <tab heading="Ingredients" ng-if="product.ingredients.length > 0">
-       <p class="tab"><span ng-repeat="ingredient in product.ingredients">{{ingredient}}<span ng-if="!$last">, </span></span></p>
-      </tab>
-     </tabset>
     </div>
-  </div>
-  </div>
+    <tabset>
+     <tab heading="Description">
+      <p class="tab">{{product.overview}}</p>
+     </tab>
+     <tab heading="Ingredients" ng-if="product.ingredients.length > 0">
+      <p class="tab"><span ng-repeat="ingredient in product.ingredients">{{ingredient}}<span ng-if="!$last">, </span></span></p>
+     </tab>
+    </tabset>
+   </div>
+ </div>
  </div>
 </div>

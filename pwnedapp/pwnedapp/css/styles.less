@@ -92,7 +92,6 @@ body {
 
     .navbar-form {
       display: block;
-      text-shadow: 2px 2px #ff0000;
     }
 
     .form-group input {
@@ -115,6 +114,7 @@ body {
     margin: 0px auto 15px auto;
     width: 100%;
     position: relative;
+    z-index: -1;
 
     .mask {
       overflow: hidden;
@@ -132,14 +132,35 @@ body {
   }
 
   .panel {
-    width: 90%;
-    margin: 0px auto;
+    width: 50%;
+    min-width: 700px;
+    margin: 15px auto;
+
+    .items {
+      display: inline-block;
+    }
+
+    .item {
+      display: inline-block;
+      margin: 15px;
+      width: 80px;
+    }
+
+    .image {
+      max-width: 80px;
+    }
 
     .panel-heading {
       background-color: #fafafa;
       font-size: 16px;
       font-weight: bold;
       color: @logo;
+
+      .view-all {
+        float: right;
+        vertical-align: middle;
+        font-size: 12px;
+      }
     }
   }
 }
@@ -147,31 +168,28 @@ body {
 
 //======== Products list
 
-.wrapper {
-  min-height:100%;
-}
 .products-container {
+  height: 100%;
+
   .sidebar {
-    background-color: @panel;
-    top: 50px;
-    left: 0px;
-    bottom: 0px;
+    display: inline-block;
+    margin: 25px;
+    width: 2500px;
     position: absolute;
-    padding-top: 15px;
-    min-height: 100%;
+    top: 50px;
+    left: 0;
+    bottom: 0;
+    height: 600px;
 
     h4 {
       font-weight: 600;
     }
 
-    .divider {
-      background-color: #8b79a3;
-      height: 1px;
-    }
   }
 
   .results-message {
     font-size: 18px;
+    margin: 15px 0;
 
     span {
       font-weight: bold;
@@ -180,8 +198,8 @@ body {
   }
 
   .results {
-    display: block;
-    margin-top: 25px;
+    display: inline-block;
+    margin-left: 250px;
   }
 
   .results-list {

@@ -2,6 +2,24 @@ myApp.controller('ProductController', ['$scope', '$route', '$http', 'product', f
   $scope.product = product;
   $scope.inWatchList = false;
 
+  if (window.localStorage['recentlyViewed']) {
+    var recentlyViewed = angular.fromJson(window.localStorage['recentlyViewed']);
+  } else {
+    var recentlyViewed = [];
+  }
+
+  var ids = recentlyViewed.map(function (product) {
+    return product._id;
+  });
+
+  if(ids.indexOf(product._id) < 0 ) {
+    if (recentlyViewed.length >= 6) {
+      recentlyViewed.splice(0,1);
+    }
+    recentlyViewed.push(product);
+    window.localStorage['recentlyViewed'] = JSON.stringify(recentlyViewed);
+  }
+
   // Determine if item is being watched
   $http.get("/watchlist").then(function (response) {
     if (response.data.length > 0 && response.data.indexOf(product) > -1) {
