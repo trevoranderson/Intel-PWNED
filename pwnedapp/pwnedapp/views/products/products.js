@@ -1,4 +1,4 @@
-myApp.controller('ProductsController', ['$scope', '$route', 'products', function($scope, $route, products) {
+myApp.controller('ProductsController', ['$scope', '$route', '$filter', 'products', function($scope, $route, $filter, products) {
   $scope.products = products;
   $scope.query = $route.current.params.query;
   $scope.totalItems = $scope.products.length;
@@ -6,11 +6,16 @@ myApp.controller('ProductsController', ['$scope', '$route', 'products', function
   $scope.maxSize = 5;
   $scope.indexMin = 0
   $scope.indexMax = 9;
+  $scope.reverse = false;
 
-  var maxPage = 5; // Fetch results from maxPage-5 to maxPage
+  var orderBy = $filter('orderBy');
 
   $scope.pageChanged = function() {
     $scope.indexMin = ($scope.currentPage - 1) * 10;
     $scope.indexMax = ($scope.currentPage * 10) - 1;
   }
+
+  $scope.sortProducts = function(predicate, reverse) {
+    $scope.products = orderBy($scope.products, predicate, reverse);
+  };
 }]);

@@ -171,6 +171,31 @@ body {
 .products-container {
   height: 100%;
 
+  .sort {
+    float: right;
+    display: inline-block;
+    font-size: 16px;
+
+    .btn-group {
+      display: inline-block;
+
+      label {
+        height: 30px;
+        padding: 5px 10px;
+      }
+    }
+  }
+
+  .pagination>li>a {
+    color: @logo !important;
+  }
+
+  .pagination>.active>a {
+    color: #fff !important;
+    background-color: @logo !important;
+    border-color: @logo-dark !important;
+  }
+
   .sidebar {
     display: inline-block;
     margin: 25px;
@@ -235,8 +260,10 @@ body {
         width: 80%;
 
         .price {
-          font-size: 14px;
-          color: #a2a2a2;
+          margin-top: 15px;
+          font-size: 16px;
+          font-weight: bold;
+          color: @logo;
         }
       }
 

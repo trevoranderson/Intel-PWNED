@@ -36302,6 +36302,7 @@ angular.module("ui.bootstrap",["ui.bootstrap.tpls","ui.bootstrap.transition","ui
 // Declare app level module which depends on views, and components
 var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ngAnimate']
 ).config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+
   $locationProvider.html5Mode(true);
   $routeProvider.when('/login', {
     templateUrl: 'views/auth/login.ejs',
@@ -36330,10 +36331,12 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ng
   }).when('/search', {
     templateUrl: 'views/products/products.html',
     resolve: {
-      products: ['$http', '$route', function ($http, $route) {
+      products: ['$http', '$route', '$filter', function ($http, $route, $filter) {
         var query = $route.current.params.query;
+        var orderBy = $filter('orderBy');
         return $http.get("/products/search/"+query).then(function (response) {
-          return response.data;
+          var sorted = orderBy(response.data, 'price', false);
+          return sorted;
         });
       }]
     },
@@ -36463,7 +36466,7 @@ myApp.controller('SignupController', ['$rootScope','$scope', '$http', '$location
     });
   }
 }]);
-;myApp.controller('ProductsController', ['$scope', '$route', 'products', function($scope, $route, products) {
+;myApp.controller('ProductsController', ['$scope', '$route', '$filter', 'products', function($scope, $route, $filter, products) {
   $scope.products = products;
   $scope.query = $route.current.params.query;
   $scope.totalItems = $scope.products.length;
@@ -36471,13 +36474,18 @@ myApp.controller('SignupController', ['$rootScope','$scope', '$http', '$location
   $scope.maxSize = 5;
   $scope.indexMin = 0
   $scope.indexMax = 9;
+  $scope.reverse = false;
 
-  var maxPage = 5; // Fetch results from maxPage-5 to maxPage
+  var orderBy = $filter('orderBy');
 
   $scope.pageChanged = function() {
     $scope.indexMin = ($scope.currentPage - 1) * 10;
     $scope.indexMax = ($scope.currentPage * 10) - 1;
   }
+
+  $scope.sortProducts = function(predicate, reverse) {
+    $scope.products = orderBy($scope.products, predicate, reverse);
+  };
 }]);
 ;myApp.controller('ProfileController', ['$scope', '$http', '$location', '$cookies', '$timeout', 'profile', function($scope, $http, $location, $cookies, $timeout, profile) {
 

@@ -1,19 +1,19 @@
 <div class="products-container">
   <div class="row">
     <div class="sidebar">
-      <h4>Show results for</h4>
-      <p>
-        Categories list goes here<br/>
-        Users can filter by category
-      </p>
       <h4>Merchants</h4>
       <p>
-        Store list goes here<br/>
-        Users can filter by store
       </p>
     </div>
     <div class="results col-md-8 col-sm-10">
       <div class="results-message">Displaying {{indexMin + 1}}-{{indexMax+1}} of {{products.length}} result(s) for <span>{{query}}</span>.</div>
+      <div class="sort">
+        Price:
+      <div class="btn-group">
+        <label class="btn btn-default" ng-model="reverse"  ng-click="sortProducts('price', false)" btn-radio="false">Low to High</label>
+        <label class="btn btn-default" ng-model="reverse" ng-click="sortProducts('price', true)" btn-radio="true">High to Low</label>
+      </div>
+      </div>
         <ul class="results-list">
           <li class="product" ng-repeat="product in products" ng-show="$index <= indexMax && $index >= indexMin">
             <a ng-href="/item/{{product._id}}" target="_self"><img class="image" src="{{product.imageurl}}"/></a>

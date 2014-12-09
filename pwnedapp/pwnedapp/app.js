@@ -5,6 +5,7 @@
 // Declare app level module which depends on views, and components
 var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ngAnimate']
 ).config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+
   $locationProvider.html5Mode(true);
   $routeProvider.when('/login', {
     templateUrl: 'views/auth/login.ejs',
@@ -33,10 +34,12 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ng
   }).when('/search', {
     templateUrl: 'views/products/products.html',
     resolve: {
-      products: ['$http', '$route', function ($http, $route) {
+      products: ['$http', '$route', '$filter', function ($http, $route, $filter) {
         var query = $route.current.params.query;
+        var orderBy = $filter('orderBy');
         return $http.get("/products/search/"+query).then(function (response) {
-          return response.data;
+          var sorted = orderBy(response.data, 'price', false);
+          return sorted;
         });
       }]
     },
