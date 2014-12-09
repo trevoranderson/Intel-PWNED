@@ -14,11 +14,13 @@ Flow of program:
 var cheerio = require('cheerio');
 var request = require('request');
 var async = require('async');
+var configDB = require('../config/database.js');
+var mongoose = require('mongoose');
+var productDB = require('../models/product.js');
 
 var SCRAPER_SITE = "Walmart";
 var siteUrl = 'http://www.walmart.com/cp/1085666';
-var TIME_BETWEEN_REQUESTS = 1000;
-var timeout_count = 0;
+var TIME_BETWEEN_REQUESTS = 200;
 
 var productQueue = [];
 var globalResultArr = [];
@@ -50,8 +52,8 @@ function sendInitialRequest(inputUrl){
         $ = cheerio.load(body);
         console.log("Scraping categories:");
         $('.lhn-menu-flyout-1col a').each(function(index){
-         //   if(index>4)
-          //      return;
+           // if(index>10)
+             //   return;
           //this website has some ugly category which will cause nuberofrequest cant be 0
           //so if the url does not have browse, it means it direct to another main category which
           //is not a single category
@@ -118,33 +120,9 @@ function scrapeSingleCategoryPage(inputUrl, page){
  *
  * @param whenDone Function to be executed after category scraping completes
  */
-function waitTillDone(whenDone){
-    if(numberOfRequests != 0){
-        console.log("Waiting for requests / Requests Remaining: " + numberOfRequests);
-        setTimeout(function(){waitTillDone(whenDone);}, 10000);
-        timeout_count++;
-        
-    }
-    else {
-        whenDone();
-    }
-}
 
-var sendSyncedProductRequest = function(cb) {
-    async.eachSeries(productQueue,
-        function (url, callback) {
-            console.log("Getting " + url);
-            getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
-        },
-        function (err) {
-            if(err){
-                cb(err, null);
-            }
-            else{
-                cb(null , globalResultArr);
-            }
-        });
-}
+
+
 
 //for synchronously sending a batch of product requests
 function getProductPage(productUrl, callback) {
@@ -161,41 +139,100 @@ function getProductPage(productUrl, callback) {
     callback();
 }
 
-
+function removeExtraneousChars(input){
+    return input.replace(/\r/g, "").replace(/\n/g, "").replace(/\t/g, "").trim();
+}
 function sendProductRequest(productUrl, cb) {
     request(productUrl, function (err, resp, body) {
         if (err)
             throw err;
 
         $ = cheerio.load(body);
-
-
+        var overview = $('.module > p').text();
+        var ingredients = $('.js-ingredients p+ p').text();
+       //var overview = $('.module p:nth-child(1)').text();
+       //var ingredients = $('.js-ingredients p').text();
         var name_long = $('.js-product-heading').text();
         var name = name_long.trim();
         var price = $('.price-display').text().trim();
         var imgUrl = $('.js-product-primary-image').attr('src');
         var lastaccess = Date(Date.now()).toString();
- 
-        //extract overview and ingredients
+        ingredients = ingredients.substring(0, ingredients.indexOf('.'));  //bunch of unformatted junk after period
+        var ingredientList = ingredients.split(',').map(removeExtraneousChars); //create list of ingredients
         
-        //var overview = "";
-        //var ingredients = "";
+      
 
         var res = {
                     name: name,
                     price: price,
                     imageurl: imgUrl,
                     producturl: productUrl,
+                    overview: overview,
+                    ingredients: ingredientList,
                     scraperParams: {
                         site: SCRAPER_SITE,
                         lastAccess: lastaccess
                     }
-                    //overview:
-                    //ingredients:
+                    
                   };
+                  //JERRID: Insert new product into DB
+        var zz = new productDB();
+        zz.name = res.name;
+        zz.price = res.price.substring(1);
+        zz.imageurl = res.imageurl;
+        zz.producturl = res.producturl;
+        zz.overview = res.overview;
+        zz.ingredients = res.ingredients;
+        zz.scraperParams = res.scraperParams;
+        zz.save(function (err, fluffy) {
+          if (err) return console.error(err);
+          });   
+        //-------------     
         cb(null, res);
     });
 }
+
+
+var sendSyncedProductRequest = function(cbSize, cb) {
+    if(!cb){
+        cb = cbSize;
+        cbSize = null;
+    }
+    var index = 0;
+    async.eachSeries(productQueue,
+        function (url, callback) {
+            console.log("Getting " + url);
+            getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
+            if(cbSize && ((index % cbSize) === cbSize-1)){
+                cb(null, globalResultArr);
+                globalResultArr = [];
+            }
+            index++;
+        },
+        function (err) {
+            if(err){
+                cb(err, null);
+            }
+            else
+                cb(null , globalResultArr);
+        });
+}
+
+function waitTillDone(whenDone){
+    if(numberOfRequests != 0){
+        console.log("Waiting for requests / Requests Remaining: " + numberOfRequests);
+        setTimeout(function(){waitTillDone(whenDone);}, 10000);
+    }
+    else {
+        whenDone();
+    }
+}
+//for just getting one product request
+exports.scrapeAll = function (cbSize, cb){
+    sendInitialRequest(siteUrl);
+    waitTillDone(function() {sendSyncedProductRequest(cbSize, cb);});
+}
+
 
 //for just getting one product request
 function updateSingleProduct(productUrl, next){
@@ -206,11 +243,6 @@ function updateSingleProduct(productUrl, next){
         else
             next(null, res);
     });
-}
-
-exports.scrapeAll = function (next){
-    sendInitialRequest(siteUrl);
-    waitTillDone(function() {sendSyncedProductRequest(next);});
 }
 
 exports.updateSingleProduct = updateSingleProduct;
