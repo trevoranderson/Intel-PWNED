@@ -36443,7 +36443,10 @@ myApp.controller('SignupController', ['$rootScope','$scope', '$http', '$location
 
   // Determine if item is being watched
   $http.get("/watchlist").then(function (response) {
-    if (response.data.length > 0 && response.data.indexOf(product) > -1) {
+    var list = response.data.map(function (product) {
+      return product._id;
+    });
+    if (response.data.length > 0 && list.indexOf(product._id) > -1) {
       $scope.inWatchList = true;
     }
   });

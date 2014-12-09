@@ -281,6 +281,12 @@ body {
 .product-container {
   margin: 0 20px;
 
+  .product {
+    width: 1200px;
+    float: left;
+    margin-top: 20px;
+  }
+
   .name {
     font-size: 24px;
     font-weight: bold;
@@ -296,9 +302,9 @@ body {
 
   .image-container {
     float:left;
-    margin-top: 10px;
+    margin-right: 25px;
     display: inline-block;
-    width: 20%;
+    max-width: 200px;
   }
 
   .actions {
@@ -328,10 +334,10 @@ body {
   }
 
   .description {
-    float:left;
-    width: 79%;
+    float: left;
     display: inline-block;
     vertical-align: top;
+    max-width: 900px;
 
     .price {
       font-size: 20px;
@@ -355,6 +361,21 @@ body {
 
   .panel {
     padding: 15px;
+  }
+
+  .watched-item {
+    width: 600px;
+    position: relative;
+
+    .image {
+      max-width: 100px;
+    }
+
+    .unwatch {
+      position: absolute;
+      bottom: 15px;
+      right: 20px;
+    }
   }
 
   .acnt-header {
@@ -395,7 +416,7 @@ body {
       }
 
       .name {
-        font-size: 18px;
+        font-size: 16px;
       }
 
       .price {

@@ -14,15 +14,15 @@
         <div class="mask"></div>
       </div>
       <div class="watchlist-header">Your Watched Items</div>
-      <div class="no-items watched-item" ng-if="watchlist.length < 1">You are currently not watching any items.</div>
-      <div class="panel panel-default animation" ng-repeat="product in watchlist">
+      <div class="no-items" ng-if="watchlist.length < 1">You are currently not watching any items.</div>
+      <div class="panel panel-default animation watched-item" ng-mouseenter="product.active = true" ng-mouseleave="product.active = false" ng-repeat="product in watchlist">
           <div class="image-container">
             <a ng-href="/item/{{product._id}}"><img class="image" height="150px" src="{{product.imageurl}}"/></a>
           </div>
-          <a ng-href="/item/{{product._id}}"><span class="name">{{product.name}}</span></a>
+          <a ng-href="/item/{{product._id}}"><span class="name">{{product.name | cut:true:60:' ...'}}</span></a>
           <p class="merchant">Sold by {{product.scraperParams.site}}</p>
           <p class="price"><b>{{product.price}}</b></p>
-          <a type="button" class="btn btn-danger" ng-click="unWatchItem(product._id, $index)"><i class="fa fa-eye-slash"></i> Un-Watch Item</a>
+          <a type="button" ng-show="product.active" class="btn btn-danger unwatch animation" ng-click="unWatchItem(product._id, $index)" alt="Un-Watch Item"><i class="fa fa-eye-slash"></i></a>
       </div>
     </div>
   </div>
