@@ -14,16 +14,22 @@ Flow of program:
 var cheerio = require('cheerio');
 var request = require('request');
 var async = require('async');
+var configDB = require('../config/database.js');
+var mongoose = require('mongoose');
+var productDB = require('../models/product.js');
 
 var SCRAPER_SITE = "CVS Pharmacy";
 var siteUrl = 'http://www.cvs.com';
-var TIME_BETWEEN_REQUESTS = 100;
+var TIME_BETWEEN_REQUESTS = 200;
 
 var productQueue = [];
 var globalResultArr = [];
 
 // ==== Function declarations go here =====
 
+mongoose.connect(configDB.url, function (err) {
+    console.log ("DB Connection Error" + err);
+}); // connect to our database
 
 var numberOfRequests = 0;
 
@@ -120,7 +126,7 @@ function scrapeSingleCategoryPage(inputUrl, count){
         });
 
         //go to the next X products, where X is products per page
-        scrapeSingleCategoryPage(inputUrl, count+1);
+       //scrapeSingleCategoryPage(inputUrl, count+1);
 
         decrementRequests();
     });
@@ -153,19 +159,34 @@ function sendProductRequest(productUrl, cb) {
         var ingredients = $('#prodIngd').text();
         ingredients = ingredients.substring(0, ingredients.indexOf('.'));  //bunch of unformatted junk after period
         var ingredientList = ingredients.split(',').map(removeExtraneousChars); //create list of ingredients
-        var res = {
-                    name: name,
-                    price: res[0],
-                    imageurl: imageUrl,
-                    producturl: productUrl,
-                    overview: overview,
-                    ingredients: ingredientList,
-                    scraperParams: {
-                        site: SCRAPER_SITE,
-                        lastAccess: lastaccess
-                    }
-                  };
-        cb(null, res);
+        
+        var p = {
+            name: name,
+            price: res[0],
+            imageurl: imageUrl,
+            producturl: productUrl,
+            overview: overview,
+            ingredients: ingredientList,
+            scraperParams: {
+                site: SCRAPER_SITE,
+                lastAccess: lastaccess
+            }
+          };
+
+          //JERRID: Insert new product into DB
+        var zz = new productDB();
+        zz.name = p.name;
+        zz.price = p.price.substring(1);
+        zz.imageurl = p.imageurl;
+        zz.producturl = p.producturl;
+        zz.overview = p.overview;
+        zz.ingredients = p.ingredients;
+        zz.scraperParams = p.scraperParams;
+        zz.save(function (err, fluffy) {
+          if (err) return console.error(err);
+          });   
+        //-------------     
+        cb(null, p);
     });
 }
 
@@ -194,7 +215,8 @@ var sendSyncedProductRequest = function(cbSize, cb) {
             console.log("Getting " + url);
             getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
             if(cbSize && ((index % cbSize) === cbSize-1)){
-                cb(null, globalResultArr.slice(index-(cbSize -1), index));
+                cb(null, globalResultArr);
+                globalResultArr = [];
             }
             index++;
         },
@@ -202,8 +224,8 @@ var sendSyncedProductRequest = function(cbSize, cb) {
             if(err){
                 cb(err, null);
             }
-            else if(!cbSize)
-                    cb(null , globalResultArr);
+            else
+                cb(null , globalResultArr);
         });
 }
 
