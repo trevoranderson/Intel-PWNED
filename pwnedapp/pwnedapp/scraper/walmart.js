@@ -152,7 +152,7 @@ function sendProductRequest(productUrl, cb) {
        //var ingredients = $('.js-ingredients p').text();
         var name_long = $('.js-product-heading').text();
         var name = name_long.trim();
-        var price = $('.price-display').text().trim();
+        var price = $('.price').text().trim();
         var imgUrl = $('.js-product-primary-image').attr('src');
         var lastaccess = Date(Date.now()).toString();
         ingredients = ingredients.substring(0, ingredients.indexOf('.'));  //bunch of unformatted junk after period
