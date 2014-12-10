@@ -14,9 +14,7 @@ Flow of program:
 var cheerio = require('cheerio');
 var request = require('request');
 var async = require('async');
-var configDB = require('../config/database.js');
-var mongoose = require('mongoose');
-var productDB = require('../models/product.js');
+
 
 var SCRAPER_SITE = "Walmart";
 var siteUrl = 'http://www.walmart.com/cp/1085666';
@@ -175,18 +173,7 @@ function sendProductRequest(productUrl, cb) {
                     }
                     
                   };
-                  //JERRID: Insert new product into DB
-        var zz = new productDB();
-        zz.name = res.name;
-        zz.price = res.price.substring(1);
-        zz.imageurl = res.imageurl;
-        zz.producturl = res.producturl;
-        zz.overview = res.overview;
-        zz.ingredients = res.ingredients;
-        zz.scraperParams = res.scraperParams;
-        zz.save(function (err, fluffy) {
-          if (err) return console.error(err);
-          });   
+                  
         //-------------     
         cb(null, res);
     });
