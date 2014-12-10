@@ -14,7 +14,9 @@ Flow of program:
 var cheerio = require('cheerio');
 var request = require('request');
 var async = require('async');
-
+var configDB = require('../config/database.js');
+var mongoose = require('mongoose');
+var productDB = require('../models/product.js');
 
 var SCRAPER_SITE = "Walmart";
 var siteUrl = 'http://www.walmart.com/cp/1085666';
@@ -24,8 +26,11 @@ var productQueue = [];
 var globalResultArr = [];
 
 // ==== Function declarations go here =====
+mongoose.connect(configDB.url, function (err) {
+    console.log ("DB Connection Error" + err);
+}); // connect to our database
 
-
+var outerRequests = 0;
 var numberOfRequests = 0;
 
 function incrementRequests(){
@@ -50,8 +55,8 @@ function sendInitialRequest(inputUrl){
         $ = cheerio.load(body);
         console.log("Scraping categories:");
         $('.lhn-menu-flyout-1col a').each(function(index){
-           // if(index>10)
-             //   return;
+            //if(index!=45)
+              //  return;
           //this website has some ugly category which will cause nuberofrequest cant be 0
           //so if the url does not have browse, it means it direct to another main category which
           //is not a single category
@@ -153,6 +158,7 @@ function sendProductRequest(productUrl, cb) {
         var name_long = $('.js-product-heading').text();
         var name = name_long.trim();
         var price = $('.price').text().trim();
+        price = price.replace(',','');
         var imgUrl = $('.js-product-primary-image').attr('src');
         var lastaccess = Date(Date.now()).toString();
         ingredients = ingredients.substring(0, ingredients.indexOf('.'));  //bunch of unformatted junk after period
@@ -173,7 +179,18 @@ function sendProductRequest(productUrl, cb) {
                     }
                     
                   };
-                  
+                  //JERRID: Insert new product into DB
+        var zz = new productDB();
+        zz.name = res.name;
+        zz.price = res.price.substring(1);
+        zz.imageurl = res.imageurl;
+        zz.producturl = res.producturl;
+        zz.overview = res.overview;
+        zz.ingredients = res.ingredients;
+        zz.scraperParams = res.scraperParams;
+        zz.save(function (err, fluffy) {
+          if (err) return console.error(err);
+          });   
         //-------------     
         cb(null, res);
     });
