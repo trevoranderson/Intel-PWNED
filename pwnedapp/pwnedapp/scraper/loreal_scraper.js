@@ -100,6 +100,7 @@ function scrapeSubCategoryPage(inputUrl){
             productQueue.push(nextLink);
         });
 
+        //FIXME
         //scrapeSingleCategoryPage(inputUrl, page+1);
         //ADD CODE TO TRAVERSE PAGES!!!!!!!!!!!!!!!!!!!!!!!
 

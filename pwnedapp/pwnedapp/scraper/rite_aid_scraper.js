@@ -76,7 +76,7 @@ function scrapeSingleCategoryPage(inputUrl, page){
 
         //check that we haven't gone over the max page
         var currPage = $("li[class='current number-btn']").first().text();
-        //console.log("Current Page: " + currPage);
+
         if( currPage != page ) {
             console.log("Finished: " + categoryPage);
             decrementRequests();
@@ -90,7 +90,8 @@ function scrapeSingleCategoryPage(inputUrl, page){
             productQueue.push(nextLink);
         });
 
-        //scrapeSingleCategoryPage(inputUrl, page+1);
+        //comment this line out to only grab the first page of every category
+        scrapeSingleCategoryPage(inputUrl, page+1);
 
         decrementRequests();
     });
@@ -113,7 +114,7 @@ function waitTillDone(whenDone){
     }
 }
 
-var sendSyncedProductRequest = function(cb) {
+var sendSyncedProductRequest_old = function(cb) {
     async.eachSeries(productQueue,
         function (url, callback) {
             console.log("Getting " + url);
@@ -129,16 +130,42 @@ var sendSyncedProductRequest = function(cb) {
         });
 }
 
+var sendSyncedProductRequest = function(cbSize, cb) {
+    if(!cb){
+        cb = cbSize;
+        cbSize = null;
+    }
+    var index = 0;
+    async.eachSeries(productQueue,
+        function (url, callback) {
+            console.log("Getting " + url);
+            getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
+            if(cbSize && ((index % cbSize) === cbSize-1)){
+                cb(null, globalResultArr.slice(index-(cbSize -1), index));
+            }
+            index++;
+        },
+        function (err) {
+            if(err){
+                cb(err, null);
+            }
+            else if(!cbSize)
+                    cb(null , globalResultArr);
+        });
+}
+
 //for synchronously sending a batch of product requests
 function getProductPage(productUrl, callback) {
     sendProductRequest(productUrl, function(err, res){
         if(err){
             console.log(err);
         }
-        else
-            globalResultArr.push(res);
+        else {
+            if(res)
+                globalResultArr.push(res);
+            callback();
+        }
     });
-    callback();
 }
 
 
@@ -204,6 +231,11 @@ function sendProductRequest(productUrl, cb) {
     });
 }
 
+exports.scrapeAll = function (cbSize, cb){
+    sendInitialRequest(siteUrl);
+    waitTillDone(function() {sendSyncedProductRequest(cbSize, cb);});
+}
+
 //for just getting one product request
 function updateSingleProduct(productUrl, next){
     sendProductRequest(productUrl, function(err, res){
@@ -213,11 +245,6 @@ function updateSingleProduct(productUrl, next){
         else
             next(null, res);
     });
-}
-
-exports.scrapeAll = function (next){
-    sendInitialRequest(siteUrl);
-    waitTillDone(function() {sendSyncedProductRequest(next);});
 }
 
 exports.updateSingleProduct = updateSingleProduct;
