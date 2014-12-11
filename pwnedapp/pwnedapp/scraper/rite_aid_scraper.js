@@ -84,7 +84,6 @@ function scrapeSingleCategoryPage(inputUrl, page){
 
         //check that we haven't gone over the max page
         var currPage = $("li[class='current number-btn']").first().text();
-
         if( currPage != page ) {
             console.log("Finished: " + categoryPage);
             decrementRequests();
@@ -122,22 +121,6 @@ function waitTillDone(whenDone){
     }
 }
 
-var sendSyncedProductRequest_old = function(cb) {
-    async.eachSeries(productQueue,
-        function (url, callback) {
-            console.log("Getting " + url);
-            getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
-        },
-        function (err) {
-            if(err){
-                cb(err, null);
-            }
-            else{
-                cb(null , globalResultArr);
-            }
-        });
-}
-
 var sendSyncedProductRequest = function(cbSize, cb) {
     if(!cb){
         cb = cbSize;
@@ -158,8 +141,8 @@ var sendSyncedProductRequest = function(cbSize, cb) {
             if(err){
                 cb(err, null);
             }
-            else if(!cbSize)
-                    cb(null , globalResultArr);
+            else
+                cb(null , globalResultArr);
         });
 }
 
@@ -233,7 +216,7 @@ function sendProductRequest(productUrl, cb) {
                         site: SCRAPER_SITE,
                         lastAccess: lastaccess
                     }
-                  };
+        };
 
         //DB insertions
         var zz = new productDB();
@@ -245,7 +228,8 @@ function sendProductRequest(productUrl, cb) {
         zz.ingredients = p.ingredients;
         zz.scraperParams = p.scraperParams;
         zz.save(function (err, fluffy) {
-          if (err) return console.error(err);
+        if (err) 
+            return console.error(err);
         });
 
         cb(null, p);
