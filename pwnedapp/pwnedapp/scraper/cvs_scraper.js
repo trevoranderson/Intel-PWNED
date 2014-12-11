@@ -16,7 +16,8 @@ var request = require('request');
 var async = require('async');
 var configDB = require('../config/database.js');
 var mongoose = require('mongoose');
-var productDB = require('../models/product.js');
+// General purpose product scraper doesn't need to know about the backend choice
+//var productDB = require('../models/product.js');
 
 var SCRAPER_SITE = "CVS Pharmacy";
 var siteUrl = 'http://www.cvs.com';
@@ -174,17 +175,17 @@ function sendProductRequest(productUrl, cb) {
           };
 
           //JERRID: Insert new product into DB
-        var zz = new productDB();
-        zz.name = p.name;
-        zz.price = p.price.substring(1);
-        zz.imageurl = p.imageurl;
-        zz.producturl = p.producturl;
-        zz.overview = p.overview;
-        zz.ingredients = p.ingredients;
-        zz.scraperParams = p.scraperParams;
-        zz.save(function (err, fluffy) {
-          if (err) return console.error(err);
-          });   
+        //var zz = new productDB();
+        //zz.name = p.name;
+        //zz.price = p.price.substring(1);
+        //zz.imageurl = p.imageurl;
+        //zz.producturl = p.producturl;
+        //zz.overview = p.overview;
+        //zz.ingredients = p.ingredients;
+        //zz.scraperParams = p.scraperParams;
+        //zz.save(function (err, fluffy) {
+        //  if (err) return console.error(err);
+        //  });   
         //-------------     
         cb(null, p);
     });

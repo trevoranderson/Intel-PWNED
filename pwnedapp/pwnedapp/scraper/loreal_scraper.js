@@ -14,16 +14,30 @@ Flow of program:
 var cheerio = require('cheerio');
 var request = require('request');
 var async = require('async');
+var configDB = require('../config/database.js');
+var mongoose = require('mongoose');
+var productDB = require('../models/product.js');
+
+//for running the phantom script -> retrieves AJAX stuff
+var childProcess = require('child_process');
+var phantomjs    = require('phantomjs');
+var exePath      = phantomjs.path;
+var path         = require('path');
 
 var SCRAPER_SITE = "L'oreal";
 var siteUrl = 'http://www.lorealparisusa.com';
-var TIME_BETWEEN_REQUESTS = 1000;
+var TIME_BETWEEN_REQUESTS = 200;
 
 var productQueue = [];
 var globalResultArr = [];
 
 // ==== Function declarations go here =====
 
+//connect to DB
+mongoose.connect(configDB.url, function (err) {
+    if(err)
+        console.log ("DB Connection Error " + err);
+});
 
 var numberOfRequests = 0;
 
@@ -93,19 +107,36 @@ function scrapeSubCategoryPage(inputUrl){
             throw err;
         $ = cheerio.load(body);
 
-        //add product URLs to the queue
+        //add product URLs from first page to the queue
         $('div.wrap.products-container').find('article.module-product-box').each(function(index){
             var nextLink = siteUrl + $(this).find('a').attr('href');
             console.log("Product: " + nextLink);
             productQueue.push(nextLink);
         });
 
-        //scrapeSingleCategoryPage(inputUrl, page+1);
-        //ADD CODE TO TRAVERSE PAGES!!!!!!!!!!!!!!!!!!!!!!!
+        //add product URLs from the other pages to the queue
+        loadPagesWithPhantom(inputUrl);
 
         decrementRequests();
     });
+}
 
+
+function loadPagesWithPhantom(url){
+    incrementRequests();
+    var childArgs = [path.join(__dirname, 'loreal_phantom.js'), url];
+    childProcess.execFile(exePath, childArgs, {maxBuffer:1024*1024}, function(err, stdout, stderr){
+        //parse stdout by newlines and add to queue
+        stdout.split("\n").forEach(function(element, index, array) {
+            if( element != "" ) {
+                var nextLink = siteUrl + element;
+                console.log("Product: " + nextLink);
+                productQueue.push(nextLink);
+            }
+        });
+
+        decrementRequests();
+    });
 }
 
 /**
@@ -124,22 +155,6 @@ function waitTillDone(whenDone){
     }
 }
 
-var sendSyncedProductRequest_old = function(cb) {
-    async.eachSeries(productQueue,
-        function (url, callback) {
-            console.log("Getting " + url);
-            getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
-        },
-        function (err) {
-            if(err){
-                cb(err, null);
-            }
-            else{
-                cb(null , globalResultArr);
-            }
-        });
-}
-
 var sendSyncedProductRequest = function(cbSize, cb) {
     if(!cb){
         cb = cbSize;
@@ -152,6 +167,7 @@ var sendSyncedProductRequest = function(cbSize, cb) {
             getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
             if(cbSize && ((index % cbSize) === cbSize-1)){
                 cb(null, globalResultArr.slice(index-(cbSize -1), index));
+                globalResultArr = [];
             }
             index++;
         },
@@ -159,8 +175,8 @@ var sendSyncedProductRequest = function(cbSize, cb) {
             if(err){
                 cb(err, null);
             }
-            else if(!cbSize)
-                    cb(null , globalResultArr);
+            else
+                cb(null , globalResultArr);
         });
 }
 
@@ -231,7 +247,7 @@ function sendProductRequest(productUrl, cb) {
         }
 
 
-        var res = {
+        var p = {
                     name: name,
                     price: price,
                     imageurl: imgUrl,
@@ -243,7 +259,21 @@ function sendProductRequest(productUrl, cb) {
                         lastAccess: lastaccess
                     }
                   };
-        cb(null, res);
+        
+        var zz = new productDB();
+        zz.name = p.name;
+        zz.price = p.price.substring(1);
+        zz.imageurl = p.imageurl;
+        zz.producturl = p.producturl;
+        zz.overview = p.overview;
+        zz.ingredients = p.ingredients;
+        zz.scraperParams = p.scraperParams;
+        zz.save(function (err, fluffy) {
+            if (err) 
+                return console.error(err);
+        });   
+        //-------------     
+        cb(null, p);
     });
 }
 
@@ -264,3 +294,9 @@ function updateSingleProduct(productUrl, next){
 }
 
 exports.updateSingleProduct = updateSingleProduct;
+
+//===============================================
+//                  PHANTOM TESTS
+//===============================================
+//loadPagesWithPhantom(null, "http://www.lorealparisusa.com/en/Products/Skin-Care/Moisturizers.aspx");
+//loadPagesWithPhantom(null, "http://www.lorealparisusa.com/en/Products/Skin-Care/Self-Tanner.aspx");
