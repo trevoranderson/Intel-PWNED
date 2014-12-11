@@ -3,7 +3,12 @@
 var fn = require('fn.js');
 var productDB = require('../models/product.js');
 var userDB = require('../models/user.js');
-var scraper = require('../scraper/cvs_scraper.js');
+var scrapers = [
+    require('../scraper/cvs_scraper.js'), 
+    require('../scraper/loreal_scraper.js'),
+    require('../scraper/rite_aid_scraper.js'),
+    require('../scraper/target_scraper.js')
+];
 var lazy = require('lazy.js');
 module.exports = function (app, passport) {
     // Support server side slicing with ?first=NUMBER&last=NUMBER
@@ -14,14 +19,14 @@ module.exports = function (app, passport) {
                 return proj.product;
             },
             fn.map(function (p) {
-                    return {
-                        product: p,
-                        index: regQuery.exec(p.name).index,
-                    };
-                }, products)
+                return {
+                    product: p,
+                    index: regQuery.exec(p.name).index,
+                };
+            }, products)
             .sort(function (a, b) {
-                        return (a.index < b.index) ? -1: 1;
-                    })
+                return (a.index < b.index) ? -1: 1;
+            })
             );
             if (req.query.first && req.query.last) {
                 res.json(ret.slice(req.query.first, req.query.last));
@@ -35,17 +40,19 @@ module.exports = function (app, passport) {
         productDB.find().exec(function (err, products) {
             // Quick hack to put *something* in the database if nothing is there. Remove when proper CRUD is enabled
             if (products.length === 0) {
-                scraper.scrapeAll(5, function (err, products) {
-                    lazy(products).each(function (p) {
-                        var zz = new productDB();
-                        zz.name = p.name;
-                        zz.price = p.price.substring(1);
-                        zz.imageurl = p.imageurl;
-                        zz.producturl = p.producturl;
-                        zz.overview = p.overview;
-                        zz.ingredients = p.ingredients;
-                        zz.scraperParams = p.scraperParams;
-                        zz.save();
+                lazy(scrapers).each(function (scraper) { 
+                    scraper.scrapeAll(5, function (err, products) {
+                        lazy(products).each(function (p) {
+                            var zz = new productDB();
+                            zz.name = p.name;
+                            zz.price = p.price.substring(1);
+                            zz.imageurl = p.imageurl;
+                            zz.producturl = p.producturl;
+                            zz.overview = p.overview;
+                            zz.ingredients = p.ingredients;
+                            zz.scraperParams = p.scraperParams;
+                            zz.save();
+                        });
                     });
                 });
             }
@@ -67,10 +74,10 @@ module.exports = function (app, passport) {
                 _id: { $in: user.watchlist }
             }, function (err, products) {
                 res.json(fn.map(function (pId) {
-                        return fn.filter(function (p) {
-                            return p.id === pId;
-                        }, products)[0];
-                    }, user.watchlist));
+                    return fn.filter(function (p) {
+                        return p.id === pId;
+                    }, products)[0];
+                }, user.watchlist));
             });
         });
     });
