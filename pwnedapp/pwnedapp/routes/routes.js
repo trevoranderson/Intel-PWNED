@@ -13,8 +13,22 @@ var lazy = require('lazy.js');
 module.exports = function (app, passport) {
     // Support server side slicing with ?first=NUMBER&last=NUMBER
     app.get('/products/search/:query', function (req, res) {
-        var regQuery = new RegExp(req.param("query"), 'i')
-        productDB.find({ name: regQuery }).exec(function (err, products) {
+        var searchWords = (function () {
+            var ret = {};
+            var queryArr = req.params.query.split(" ");
+            // The last word doesn't have to be spelled correctly
+            var lastWord = queryArr.pop();
+            lazy(queryArr).each(function (k) {
+                ret["keywords." + k.toLowerCase()] = true;
+            });
+            return ret;
+        })();
+        var regQuery = new RegExp(req.params.query.split(" ").pop(), 'i');
+        productDB.find(searchWords).exec(function (err, data) {
+            var products = lazy(data).filter(function (p) {
+                var qqq = p.name.match(regQuery);
+                return qqq && qqq.length !== 0;
+            }).toArray();
             var ret = fn.map(function (proj) {
                 return proj.product;
             },
@@ -40,11 +54,19 @@ module.exports = function (app, passport) {
         productDB.find().exec(function (err, products) {
             // Quick hack to put *something* in the database if nothing is there. Remove when proper CRUD is enabled
             if (products.length === 0) {
-                lazy(scrapers).each(function (scraper) { 
+                lazy(scrapers).each(function (scraper) {
                     scraper.scrapeAll(5, function (err, products) {
                         lazy(products).each(function (p) {
                             var zz = new productDB();
                             zz.name = p.name;
+                            zz.keywords = (function () {
+                                var wordArr = p.name.split(" ");
+                                var ret = {};
+                                lazy(wordArr).each(function (w) { 
+                                    ret[w.toLowerCase()] = true;
+                                });
+                                return ret;
+                            })();
                             zz.price = p.price.substring(1);
                             zz.imageurl = p.imageurl;
                             zz.producturl = p.producturl;
