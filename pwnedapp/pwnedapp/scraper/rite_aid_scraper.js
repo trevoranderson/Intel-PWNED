@@ -14,6 +14,9 @@ Flow of program:
 var cheerio = require('cheerio');
 var request = require('request');
 var async = require('async');
+var configDB = require('../config/database.js');
+var mongoose = require('mongoose');
+var productDB = require('../models/product.js');
 
 var SCRAPER_SITE = "Rite Aid";
 var siteUrl = 'http://shop.riteaid.com';
@@ -24,6 +27,11 @@ var globalResultArr = [];
 
 // ==== Function declarations go here =====
 
+//connect to DB
+mongoose.connect(configDB.url, function (err) {
+    if(err)
+        console.log ("DB Connection Error " + err);
+});
 
 var numberOfRequests = 0;
 
@@ -76,7 +84,6 @@ function scrapeSingleCategoryPage(inputUrl, page){
 
         //check that we haven't gone over the max page
         var currPage = $("li[class='current number-btn']").first().text();
-        //console.log("Current Page: " + currPage);
         if( currPage != page ) {
             console.log("Finished: " + categoryPage);
             decrementRequests();
@@ -90,7 +97,8 @@ function scrapeSingleCategoryPage(inputUrl, page){
             productQueue.push(nextLink);
         });
 
-        //scrapeSingleCategoryPage(inputUrl, page+1);
+        //comment this line out to only grab the first page of every category
+        scrapeSingleCategoryPage(inputUrl, page+1);
 
         decrementRequests();
     });
@@ -113,19 +121,28 @@ function waitTillDone(whenDone){
     }
 }
 
-var sendSyncedProductRequest = function(cb) {
+var sendSyncedProductRequest = function(cbSize, cb) {
+    if(!cb){
+        cb = cbSize;
+        cbSize = null;
+    }
+    var index = 0;
     async.eachSeries(productQueue,
         function (url, callback) {
             console.log("Getting " + url);
             getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
+            if(cbSize && ((index % cbSize) === cbSize-1)){
+                cb(null, globalResultArr);
+                globalResultArr = [];
+            }
+            index++;
         },
         function (err) {
             if(err){
                 cb(err, null);
             }
-            else{
+            else
                 cb(null , globalResultArr);
-            }
         });
 }
 
@@ -135,10 +152,12 @@ function getProductPage(productUrl, callback) {
         if(err){
             console.log(err);
         }
-        else
-            globalResultArr.push(res);
+        else {
+            if(res)
+                globalResultArr.push(res);
+            callback();
+        }
     });
-    callback();
 }
 
 
@@ -186,22 +205,40 @@ function sendProductRequest(productUrl, cb) {
             });
         }
 
-        //split the ingredients into an array
-
-        var res = {
+        var p = {
                     name: name,
                     price: price,
                     imageurl: imgUrl,
                     producturl: productUrl,
+                    overview: overview,
+                    ingredients: ingredients,
                     scraperParams: {
                         site: SCRAPER_SITE,
                         lastAccess: lastaccess
-                    },
-                    overview: overview,
-                    ingredients: ingredients
-                  };
-        cb(null, res);
+                    }
+        };
+
+        //DB insertions
+        var zz = new productDB();
+        zz.name = p.name;
+        zz.price = p.price.substring(1);
+        zz.imageurl = p.imageurl;
+        zz.producturl = p.producturl;
+        zz.overview = p.overview;
+        zz.ingredients = p.ingredients;
+        zz.scraperParams = p.scraperParams;
+        zz.save(function (err, fluffy) {
+        if (err) 
+            return console.error(err);
+        });
+
+        cb(null, p);
     });
+}
+
+exports.scrapeAll = function (cbSize, cb){
+    sendInitialRequest(siteUrl);
+    waitTillDone(function() {sendSyncedProductRequest(cbSize, cb);});
 }
 
 //for just getting one product request
@@ -213,11 +250,6 @@ function updateSingleProduct(productUrl, next){
         else
             next(null, res);
     });
-}
-
-exports.scrapeAll = function (next){
-    sendInitialRequest(siteUrl);
-    waitTillDone(function() {sendSyncedProductRequest(next);});
 }
 
 exports.updateSingleProduct = updateSingleProduct;
