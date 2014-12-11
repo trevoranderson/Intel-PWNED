@@ -12,6 +12,11 @@ var scrapers = [
 ];
 var lazy = require('lazy.js');
 module.exports = function (app, passport) {
+    // Index
+    app.get('/', function (req, res) {
+        res.sendfile('index.html');
+    });
+
     // Support server side slicing with ?first=NUMBER&last=NUMBER
     app.get('/products/search/:query', function (req, res) {
         var searchWords = (function () {
@@ -30,6 +35,31 @@ module.exports = function (app, passport) {
                 var qqq = p.name.match(regQuery);
                 return qqq && qqq.length !== 0;
             }).toArray();
+            var ret = fn.map(function (proj) {
+                return proj.product;
+            },
+            fn.map(function (p) {
+                    return {
+                        product: p,
+                        index: regQuery.exec(p.name).index,
+                    };
+                }, products)
+            .sort(function (a, b) {
+                        return (a.index < b.index) ? -1: 1;
+                    })
+            );
+            if (req.query.first && req.query.last) {
+                res.json(ret.slice(req.query.first, req.query.last));
+            } 
+            else {
+                res.json(ret);
+            }
+        });
+    });
+    app.get('/products/search/:merchant/:query', function (req, res) {
+        var regQuery = new RegExp(req.param("query"), 'i')
+        var merchant = new RegExp(req.param("merchant"), 'i');
+        productDB.find({ name: regQuery, "scraperParams.site": merchant }).exec(function (err, products) {
             var ret = fn.map(function (proj) {
                 return proj.product;
             },
@@ -56,10 +86,10 @@ module.exports = function (app, passport) {
             // Quick hack to put *something* in the database if nothing is there. Remove when proper CRUD is enabled
             if (products.length === 0) {
                 lazy(scrapers).each(function (scraper) {
-                    scraper.scrapeAll(5, function (err, products) {
-                        lazy(products).each(function (p) {
-                            var zz = new productDB();
-                            zz.name = p.name;
+                scraper.scrapeAll(5, function (err, products) {
+                    lazy(products).each(function (p) {
+                        var zz = new productDB();
+                        zz.name = p.name;
                             zz.keywords = (function () {
                                 var wordArr = p.name.split(" ");
                                 var ret = {};
@@ -68,15 +98,15 @@ module.exports = function (app, passport) {
                                 });
                                 return ret;
                             })();
-                            zz.price = p.price.substring(1);
-                            zz.imageurl = p.imageurl;
-                            zz.producturl = p.producturl;
-                            zz.overview = p.overview;
-                            zz.ingredients = p.ingredients;
-                            zz.scraperParams = p.scraperParams;
-                            zz.save();
-                        });
+                        zz.price = p.price.substring(1);
+                        zz.imageurl = p.imageurl;
+                        zz.producturl = p.producturl;
+                        zz.overview = p.overview;
+                        zz.ingredients = p.ingredients;
+                        zz.scraperParams = p.scraperParams;
+                        zz.save();
                     });
+                });
                 });
             }
             res.json(products);
@@ -97,10 +127,10 @@ module.exports = function (app, passport) {
                 _id: { $in: user.watchlist }
             }, function (err, products) {
                 res.json(fn.map(function (pId) {
-                    return fn.filter(function (p) {
-                        return p.id === pId;
-                    }, products)[0];
-                }, user.watchlist));
+                        return fn.filter(function (p) {
+                            return p.id === pId;
+                        }, products)[0];
+                    }, user.watchlist));
             });
         });
     });
@@ -111,7 +141,7 @@ module.exports = function (app, passport) {
             if (err || !product) {
                 res.json({
                     status: "error",
-                    description: "product with id: " + pId + " not found",
+                    description: "product with id: " + pId + " not found"
                 });
                 return;
             }
@@ -224,10 +254,10 @@ module.exports = function (app, passport) {
             res.send({ email : req.user.email });
         }
     });
-    
-    app.get('/', function (req, res) {
-        res.sendfile('index.html');
-    });
+    // Trevor: I don't like this
+    //app.get('*', function (req, res) {
+    //    res.sendfile('index.html');
+    //});
 
 };
 

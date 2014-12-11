@@ -2,7 +2,7 @@ myApp.controller('SearchController', ['$scope', '$http', '$location', function($
 
   $scope.searchTypeahead = function (value) {
     if (value.length > 0) {
-      return $http.get("/products/search/" + value).then(function (response) {
+      return $http.get("/products/search/" + value + "?first=0&last=10").then(function (response) {
         return response.data.map(function (item) {
           return item.name;
         });

@@ -14,9 +14,9 @@ Flow of program:
 var cheerio = require('cheerio');
 var request = require('request');
 var async = require('async');
-var configDB = require('../config/database.js');
-var mongoose = require('mongoose');
-var productDB = require('../models/product.js');
+//var configDB = require('../config/database.js');
+//var mongoose = require('mongoose');
+//var productDB = require('../models/product.js');
 
 var SCRAPER_SITE = "Rite Aid";
 var siteUrl = 'http://shop.riteaid.com';
@@ -28,10 +28,10 @@ var globalResultArr = [];
 // ==== Function declarations go here =====
 
 //connect to DB
-mongoose.connect(configDB.url, function (err) {
-    if(err)
-        console.log ("DB Connection Error " + err);
-});
+//mongoose.connect(configDB.url, function (err) {
+//    if(err)
+//        console.log ("DB Connection Error " + err);
+//});
 
 var numberOfRequests = 0;
 
@@ -218,19 +218,19 @@ function sendProductRequest(productUrl, cb) {
                     }
         };
 
-        //DB insertions
-        var zz = new productDB();
-        zz.name = p.name;
-        zz.price = p.price.substring(1);
-        zz.imageurl = p.imageurl;
-        zz.producturl = p.producturl;
-        zz.overview = p.overview;
-        zz.ingredients = p.ingredients;
-        zz.scraperParams = p.scraperParams;
-        zz.save(function (err, fluffy) {
-        if (err) 
-            return console.error(err);
-        });
+        ////DB insertions
+        //var zz = new productDB();
+        //zz.name = p.name;
+        //zz.price = p.price.substring(1);
+        //zz.imageurl = p.imageurl;
+        //zz.producturl = p.producturl;
+        //zz.overview = p.overview;
+        //zz.ingredients = p.ingredients;
+        //zz.scraperParams = p.scraperParams;
+        //zz.save(function (err, fluffy) {
+        //if (err) 
+        //    return console.error(err);
+        //});
 
         cb(null, p);
     });
