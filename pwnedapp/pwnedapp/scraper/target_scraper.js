@@ -44,7 +44,7 @@ function requestHtml_to(parser, url){
 			return;
 		}
 		requestsInProcess--;
-		return parser(body);
+		parser(body);
 	});
 }
 
@@ -55,7 +55,7 @@ function renderHtml_to(parser, url, clicks){
 	if (clicks!=undefined) childArgs.push(clicks.join(';'));
 	childProcess.execFile(exePath, childArgs, {maxBuffer:1024*1024}, function(err, stdout, stderr){
 		requestsInProcess--;
-		return parser(stdout);
+		parser(stdout);
 	});
 }
 
@@ -121,8 +121,10 @@ function getProductDetail(body){
 	//product['vendor']       = 'Target';
 	//product['info_table']   = $('ul.normal-list').text().replace(/[\r\n\t]/g,'').replace(/\s+/g, ' ');
 	
-	
-	if(product['name']!='') return product;
+	if(product['name']!=''){
+		productObjects.push(product);
+		return;
+	}
 	
 
 	// case of collection product. 
@@ -141,7 +143,10 @@ function getProductDetail(body){
 		console.log('##########$$$$$$$$$$$$')         
 		require('fs').writeFile('aaabbb.html', body);
 	}*/
-	return product;
+	if(product['name']!=''){
+		productObjects.push(product);
+		return;
+	}
 }
 
 
@@ -183,7 +188,16 @@ function sendMultipleRequsts_to_getProductDetail(){
 
 	debug('# new_products_requested #', productPages_copy.length);
 
-	async.mapLimit(productPages_copy, 
+	async.eachLimit(productPages_copy,
+			        maxRequestsAllowed - requestsInProcess,
+					function(prd, callback){
+						renderHtml_to(getProductDetail, prd, ['#item-nutrition-link']);
+						callback(null);
+					},
+					function(err){
+						if(err) throw err;
+					});
+	/*async.mapLimit(productPages_copy, 
 			        maxRequestsAllowed - requestsInProcess,
 					function(prd, callback){
 						var product = renderHtml_to(getProductDetail, prd);
@@ -191,8 +205,9 @@ function sendMultipleRequsts_to_getProductDetail(){
 					}, 
 					function(err, products){
 						if(err) debug('ERR', err);
+						console.log(products);
 						productObjects.concat(products);
-					});
+					});*/
 }
 
 function scrap_all(productNumBtwCB, CB){
@@ -213,7 +228,7 @@ function scrap_all(productNumBtwCB, CB){
 			CB (null, productObjects);
 			console.log("All Target Products Information is Updated !!!");
 		}else{
-			setTimeout(scrap_all, 2000);
+			setTimeout(function(){scrap_all(productNumBtwCB,CB);}, 2000);
 		}
 	}else{
 
@@ -229,16 +244,17 @@ function scrap_all(productNumBtwCB, CB){
 			renderHtml_to(getProductPage, shv);
 		}
 		if(productObjects.length >= productNumBtwCB){
+			debug('productObjects',productObjects);
 			var prdObjects = productObjects.slice(0, productNumBtwCB);
 			productObjects = productObjects.slice(productNumBtwCB);
 			CB (null, prdObjects);
 		}
-		setTimeout(scrap_all, 2000);
+		setTimeout(function(){scrap_all(productNumBtwCB,CB);}, 2000);
 	}
 }
 
 function update_product(product_url){
-	return renderHtml_to(getProductDetail, product_url, ['#item-nutrition-link', '#item-guestreviews-link']);
+	return renderHtml_to(getProductDetail, product_url, ['#item-nutrition-link']);
 }
 
 
@@ -264,7 +280,7 @@ exports.updateSingleProduct = function(product_url, cb){
 // main routine local test
 
 //initial_request();
-//scrap_all(100, function(obj){console.log(err, obj)});
+//scrap_all(5, function(err, obj){console.log('########!!!!'); console.log(obj)});
 
 
 
