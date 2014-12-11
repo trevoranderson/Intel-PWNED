@@ -7,7 +7,8 @@ var scrapers = [
     require('../scraper/cvs_scraper.js'), 
     require('../scraper/loreal_scraper.js'),
     require('../scraper/rite_aid_scraper.js'),
-    require('../scraper/target_scraper.js')
+    //require('../scraper/target_scraper.js'),
+    require('../scraper/loreal_scraper.js'),
 ];
 var lazy = require('lazy.js');
 module.exports = function (app, passport) {
