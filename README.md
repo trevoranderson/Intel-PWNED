@@ -47,4 +47,3 @@ haven't 'modulized' yet.
 
 **/views** contains partials
 
-sdfhsdkfjhsd
