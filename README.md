@@ -50,5 +50,15 @@ haven't 'modulized' yet.
 **/routes** contains routing functions (ex '/' is the root).
 
 **/views** contains partials
+<<<<<<< HEAD
 
 **/components** contains components for the client-side
+=======
+
+<<<<<<< HEAD
+**/components** contains components for the client-side
+=======
+**/views** contains partials
+
+
+>>>>>>> xinlei
