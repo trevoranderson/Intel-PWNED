@@ -14,9 +14,9 @@ Flow of program:
 var cheerio = require('cheerio');
 var request = require('request');
 var async = require('async');
-//var configDB = require('../config/database.js');
-//var mongoose = require('mongoose');
-//var productDB = require('../models/product.js');
+var configDB = require('../config/database.js');
+var mongoose = require('mongoose');
+var productDB = require('../models/product.js');
 
 //for running the phantom script -> retrieves AJAX stuff
 var childProcess = require('child_process');
@@ -33,11 +33,12 @@ var globalResultArr = [];
 
 // ==== Function declarations go here =====
 
-//connect to DB
-//mongoose.connect(configDB.url, function (err) {
-//    if(err)
-//        console.log ("DB Connection Error " + err);
-//});
+/*/connect to DB
+mongoose.connect(configDB.url, function (err) {
+    if(err)
+        console.log ("DB Connection Error " + err);
+});
+*/
 
 var numberOfRequests = 0;
 
@@ -60,15 +61,15 @@ function sendInitialRequest(inputUrl){
         if (err)
             throw err;
         $ = cheerio.load(body);
-        console.log("Scraping categories:");
+        //console.log("Scraping categories:");
         $('.group li').each(function(index){
             if(index != 0 && index != 1 && index != 2){return;}  //Excluding anything that is not Makeup, Hair, Skin care
             var nextLink = siteUrl + $(this).find('a').attr('href');
-            console.log("\t" + nextLink);
+            //console.log("\t" + nextLink);
             scrapeCategoryPage(nextLink);
         });
         decrementRequests();
-    });
+    }).setMaxListeners(0);
 }
 
 /**
@@ -82,14 +83,14 @@ function scrapeCategoryPage(inputUrl){
         if (err)
             throw err;
         $ = cheerio.load(body);
-        console.log("Scraping subcategories:");
+        //console.log("Scraping subcategories:");
         $('div.category li').each(function(index){
             var nextLink = siteUrl + $(this).find('a').attr('href');
-            console.log("\t" + nextLink);
+            //console.log("\t" + nextLink);
             scrapeSubCategoryPage(nextLink);
         });
         decrementRequests();
-    });
+    }).setMaxListeners(0);
 }
 
 /**
@@ -110,7 +111,7 @@ function scrapeSubCategoryPage(inputUrl){
         //add product URLs from first page to the queue
         $('div.wrap.products-container').find('article.module-product-box').each(function(index){
             var nextLink = siteUrl + $(this).find('a').attr('href');
-            console.log("Product: " + nextLink);
+            //console.log("Product: " + nextLink);
             productQueue.push(nextLink);
         });
 
@@ -118,7 +119,7 @@ function scrapeSubCategoryPage(inputUrl){
         loadPagesWithPhantom(inputUrl);
 
         decrementRequests();
-    });
+    }).setMaxListeners(0);
 }
 
 
@@ -130,7 +131,7 @@ function loadPagesWithPhantom(url){
         stdout.split("\n").forEach(function(element, index, array) {
             if( element != "" ) {
                 var nextLink = siteUrl + element;
-                console.log("Product: " + nextLink);
+                //console.log("Product: " + nextLink);
                 productQueue.push(nextLink);
             }
         });
@@ -147,7 +148,7 @@ function loadPagesWithPhantom(url){
  */
 function waitTillDone(whenDone){
     if(numberOfRequests != 0){
-        //console.log("Waiting for requests / Requests Remaining: " + numberOfRequests);
+        console.log("Waiting for requests / Requests Remaining: " + numberOfRequests);
         setTimeout(function(){waitTillDone(whenDone);}, 10000);
     }
     else {
@@ -163,7 +164,7 @@ var sendSyncedProductRequest = function(cbSize, cb) {
     var index = 0;
     async.eachSeries(productQueue,
         function (url, callback) {
-            console.log("Getting " + url);
+            //console.log("Getting " + url);
             getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
             if(cbSize && ((index % cbSize) === cbSize-1)){
                 cb(null, globalResultArr.slice(index-(cbSize -1), index));
@@ -259,21 +260,24 @@ function sendProductRequest(productUrl, cb) {
                         lastAccess: lastaccess
                     }
                   };
-        //var zz = new productDB();
-        //zz.name = p.name;
-        //zz.price = p.price.substring(1);
-        //zz.imageurl = p.imageurl;
-        //zz.producturl = p.producturl;
-        //zz.overview = p.overview;
-        //zz.ingredients = p.ingredients;
-        //zz.scraperParams = p.scraperParams;
-        //zz.save(function (err, fluffy) {
-        //    if (err) 
-        //        return console.error(err);
-        //});   
+        
+        /*
+        var zz = new productDB();
+        zz.name = p.name;
+        zz.price = p.price.substring(1);
+        zz.imageurl = p.imageurl;
+        zz.producturl = p.producturl;
+        zz.overview = p.overview;
+        zz.ingredients = p.ingredients;
+        zz.scraperParams = p.scraperParams;
+        zz.save(function (err, fluffy) {
+            if (err) 
+                return console.error(err);
+        });   
+        */
         //-------------     
         cb(null, p);
-    });
+    }).setMaxListeners(0);
 }
 
 exports.scrapeAll = function (cbSize, cb){
