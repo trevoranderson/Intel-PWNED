@@ -28,9 +28,9 @@ var globalResultArr = [];
 
 // ==== Function declarations go here =====
 
-mongoose.connect(configDB.url, function (err) {
+/*mongoose.connect(configDB.url, function (err) {
     console.log ("DB Connection Error" + err);
-}); // connect to our database
+}); // connect to our database*/
 
 var numberOfRequests = 0;
 
@@ -49,7 +49,7 @@ function sendInitialRequest(inputUrl){
         $ = cheerio.load(body);
         console.log("Scraping categories:");
         $('#shop-flyout .sublevel-nav li').each(function(index){
-            if(index != 2 && index != 9){return;}  //Excluding anythings that's not Beauty and Skin Care
+            if(index != 3 && index != 10){return;}  //Excluding anythings that's not Beauty and Skin Care
             var nextLink = siteUrl + $(this).find('a').attr('href');
             console.log("\t" + nextLink);
             scrapeCategoriesPage(nextLink);
@@ -127,7 +127,7 @@ function scrapeSingleCategoryPage(inputUrl, count){
         });
 
         //go to the next X products, where X is products per page
-       //scrapeSingleCategoryPage(inputUrl, count+1);
+       scrapeSingleCategoryPage(inputUrl, count+1);
 
         decrementRequests();
     });
