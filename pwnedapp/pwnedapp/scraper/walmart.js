@@ -109,7 +109,7 @@ function scrapeSingleCategoryPage(inputUrl, page){
             return;
         }
         
-        //scrapeSingleCategoryPage(inputUrl, page+1);
+        scrapeSingleCategoryPage(inputUrl, page+1);
 
         decrementRequests();
         console.log("end req: " + numberOfRequests);
