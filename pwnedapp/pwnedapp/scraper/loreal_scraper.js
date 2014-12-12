@@ -111,7 +111,7 @@ function scrapeSubCategoryPage(inputUrl){
         //add product URLs from first page to the queue
         $('div.wrap.products-container').find('article.module-product-box').each(function(index){
             var nextLink = siteUrl + $(this).find('a').attr('href');
-            //console.log("Product: " + nextLink);
+        //   console.log("Product: " + nextLink);
             productQueue.push(nextLink);
         });
 
@@ -148,7 +148,7 @@ function loadPagesWithPhantom(url){
  */
 function waitTillDone(whenDone){
     if(numberOfRequests != 0){
-        console.log("Waiting for requests / Requests Remaining: " + numberOfRequests);
+        console.log("LOREAL: Waiting for requests / Requests Remaining: " + numberOfRequests);
         setTimeout(function(){waitTillDone(whenDone);}, 10000);
     }
     else {
@@ -164,10 +164,10 @@ var sendSyncedProductRequest = function(cbSize, cb) {
     var index = 0;
     async.eachSeries(productQueue,
         function (url, callback) {
-            //console.log("Getting " + url);
+        //   console.log("Getting " + url);
             getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
             if(cbSize && ((index % cbSize) === cbSize-1)){
-                cb(null, globalResultArr.slice(index-(cbSize -1), index));
+                cb(null, globalResultArr);
                 globalResultArr = [];
             }
             index++;
@@ -188,8 +188,9 @@ function getProductPage(productUrl, callback) {
             console.log(err);
         }
         else {
-            if(res)
+            if(res) {
                 globalResultArr.push(res);
+            }
             callback();
         }
     });
