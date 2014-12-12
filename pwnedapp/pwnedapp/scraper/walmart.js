@@ -55,8 +55,8 @@ function sendInitialRequest(inputUrl){
         $ = cheerio.load(body);
         console.log("Scraping categories:");
         $('.lhn-menu-flyout-1col a').each(function(index){
-            //if(index!=45)
-              //  return;
+            //if(index>40)
+              // return;
           //this website has some ugly category which will cause nuberofrequest cant be 0
           //so if the url does not have browse, it means it direct to another main category which
           //is not a single category
@@ -109,7 +109,7 @@ function scrapeSingleCategoryPage(inputUrl, page){
             return;
         }
         
-        scrapeSingleCategoryPage(inputUrl, page+1);
+        //scrapeSingleCategoryPage(inputUrl, page+1);
 
         decrementRequests();
         console.log("end req: " + numberOfRequests);
@@ -137,9 +137,10 @@ function getProductPage(productUrl, callback) {
         {
             globalResultArr.push(res);
             //console.log("Global: "+ "/t" + globalResultArr);
+             callback();       
         }
     });
-    callback();
+   
 }
 
 function removeExtraneousChars(input){
@@ -153,8 +154,6 @@ function sendProductRequest(productUrl, cb) {
         $ = cheerio.load(body);
         var overview = $('.module > p').text();
         var ingredients = $('.js-ingredients p+ p').text();
-       //var overview = $('.module p:nth-child(1)').text();
-       //var ingredients = $('.js-ingredients p').text();
         var name_long = $('.js-product-heading').text();
         var name = name_long.trim();
         var price = $('.price').text().trim();
