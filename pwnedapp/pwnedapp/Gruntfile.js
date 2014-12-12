@@ -22,6 +22,7 @@ module.exports = function(grunt) {
       },
       bower: {
         src: [ 'bower_components/angular/angular.js',
+          'bower_components/angular-animate/angular-animate.min.js',
           'bower_components/angular-cookies/angular-cookies.min.js',
           'bower_components/angular-route/angular-route.min.js',
           'bower_components/jquery/dist/jquery.js',
@@ -31,7 +32,7 @@ module.exports = function(grunt) {
         dest: 'js/script.js'
       },
       dist: {
-        src: [ 'js/script.js', 'app.js', 'views/**/*.js', 'components/**/*.js'],
+        src: [ 'js/script.js', 'app.js', 'views/**/*.js', 'components/*.js'],
         dest: 'js/script.js'
       }
     },

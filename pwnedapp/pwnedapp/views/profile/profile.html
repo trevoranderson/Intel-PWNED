@@ -1,0 +1,29 @@
+<div class="profile-container">
+  <div class="row">
+    <div class="col-sm-12 col-md-3">
+      <div class="panel panel-default">
+        <div class="acnt-header"><span class="fa fa-user"></span> Account Information</div>
+          <p>
+            <strong>User ID</strong>: {{ user._id }}<br>
+            <strong>E-mail</strong>: {{ user.email }}<br>
+          </p>
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-6 watchlist">
+      <div class="divider-vertical left hidden-sm">
+        <div class="mask"></div>
+      </div>
+      <div class="watchlist-header">Your Watched Items</div>
+      <div class="no-items" ng-if="watchlist.length < 1">You are currently not watching any items.</div>
+      <div class="panel panel-default animation watched-item" ng-mouseenter="product.active = true" ng-mouseleave="product.active = false" ng-repeat="product in watchlist">
+          <div class="image-container">
+            <a ng-href="/item/{{product._id}}"><img class="image" height="150px" src="{{product.imageurl}}"/></a>
+          </div>
+          <a ng-href="/item/{{product._id}}"><span class="name">{{product.name | cut:true:60:' ...'}}</span></a>
+          <p class="merchant">Sold by {{product.scraperParams.site}}</p>
+          <p class="price"><b>{{product.price}}</b></p>
+          <a type="button" ng-show="product.active" class="btn btn-danger unwatch animation" ng-click="unWatchItem(product._id, $index)" alt="Un-Watch Item"><i class="fa fa-eye-slash"></i></a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -20,18 +20,19 @@ var productDB = require('../models/product.js');
 
 var SCRAPER_SITE = "Rite Aid";
 var siteUrl = 'http://shop.riteaid.com';
-var TIME_BETWEEN_REQUESTS = 1000;
+var TIME_BETWEEN_REQUESTS = 200;
 
 var productQueue = [];
 var globalResultArr = [];
 
 // ==== Function declarations go here =====
 
-//connect to DB
+/*/connect to DB
 mongoose.connect(configDB.url, function (err) {
     if(err)
         console.log ("DB Connection Error " + err);
 });
+*/
 
 var numberOfRequests = 0;
 
@@ -54,15 +55,15 @@ function sendInitialRequest(inputUrl){
         if (err)
             throw err;
         $ = cheerio.load(body);
-        console.log("Scraping categories:");
+        //console.log("Scraping categories:");
         $('#left-navi li').each(function(index){
             if(index != 3 && index != 4){return;}  //Excluding anything that is not Beauty or Personal Care
             var nextLink = $(this).find('a').attr('href') + "?limit=72";
-            console.log("\t" + nextLink);
+            //console.log("\t" + nextLink);
             scrapeSingleCategoryPage(nextLink, 1);
         });
         decrementRequests();
-    });
+    }).setMaxListeners(0);
 }
 
 /**
@@ -85,7 +86,7 @@ function scrapeSingleCategoryPage(inputUrl, page){
         //check that we haven't gone over the max page
         var currPage = $("li[class='current number-btn']").first().text();
         if( currPage != page ) {
-            console.log("Finished: " + categoryPage);
+            //console.log("Finished: " + categoryPage);
             decrementRequests();
             return;
         }
@@ -93,7 +94,7 @@ function scrapeSingleCategoryPage(inputUrl, page){
         //add the product URL to the queue
         $('.product-name a').each(function(index){
             var nextLink = $(this).attr('href');
-            console.log("Product: " + nextLink);
+            //console.log("Product: " + nextLink);
             productQueue.push(nextLink);
         });
 
@@ -101,7 +102,7 @@ function scrapeSingleCategoryPage(inputUrl, page){
         scrapeSingleCategoryPage(inputUrl, page+1);
 
         decrementRequests();
-    });
+    }).setMaxListeners(0);
 
 }
 
@@ -129,7 +130,7 @@ var sendSyncedProductRequest = function(cbSize, cb) {
     var index = 0;
     async.eachSeries(productQueue,
         function (url, callback) {
-            console.log("Getting " + url);
+            //console.log("Getting " + url);
             getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
             if(cbSize && ((index % cbSize) === cbSize-1)){
                 cb(null, globalResultArr);
@@ -168,9 +169,11 @@ function sendProductRequest(productUrl, cb) {
 
         $ = cheerio.load(body);
         
-        var name = $("[itemprop='name']").text();
-        var price = $("[itemprop='price']").text();
-        var imgUrl = $("[itemprop='image']").attr('src');
+        var name = $("div.product-name").find("[itemprop='name']").text();
+        var price = $("div.price-box").find("[itemprop='price']").text();
+        //var name = $("[itemprop='name']").text();
+        //var price = $("[itemprop='price']").text();
+        var imgUrl = $("div.product-img-box").find("[itemprop='image']").attr('src');
         var lastaccess = Date(Date.now()).toString();
         var overview = "";
         var ingredients = "";
@@ -218,6 +221,7 @@ function sendProductRequest(productUrl, cb) {
                     }
         };
 
+        /*
         //DB insertions
         var zz = new productDB();
         zz.name = p.name;
@@ -231,9 +235,10 @@ function sendProductRequest(productUrl, cb) {
         if (err) 
             return console.error(err);
         });
-
+        */
+        
         cb(null, p);
-    });
+    }).setMaxListeners(0);
 }
 
 exports.scrapeAll = function (cbSize, cb){

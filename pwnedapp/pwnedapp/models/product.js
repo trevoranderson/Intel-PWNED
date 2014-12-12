@@ -11,7 +11,8 @@ var productSchema = mongoose.Schema({
     scraperParams: {
         site: String,
         lastAccess: Date,
-    }
+    },
+    keywords: Object,
 });
 
 // create the model for users and expose it to our app

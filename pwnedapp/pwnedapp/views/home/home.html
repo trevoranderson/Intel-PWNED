@@ -1,0 +1,46 @@
+<div class="home-wrapper">
+  <div class="row home-search">
+    <div class="col-md-12 search-content">
+      <div class="message">The best prices at your fingertips.</div>
+
+      <form class="navbar-form" ng-controller="SearchController" ng-submit="search(query)">
+        <div class="form-group">
+          <input class="form-control input-lg" type="text" placeholder="What are you buying today?" ng-model="query" typeahead="result for result in searchTypeahead($viewValue) | limitTo:10">
+        </div>
+        <input type="submit" class="btn btn-lg btn-search" value="PWNED!"/>
+      </form>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="mask"></div>
+  </div>
+
+  <div class="panel panel-default watched-items">
+    <!-- Default panel contents -->
+    <div class="panel-heading">Your Watched Items
+      <div class="view-all"><a href="/profile">View All</a></div>
+    </div>
+    <div class="panel-body">
+      <div class="items" ng-repeat="product in watchlist | limitTo: 6">
+        <a class="item" ng-href="/item/{{product._id}}"><img class="image" height="100" src="{{product.imageurl}}"/></a>
+      </div>
+      <p ng-if="loggedIn && watchlist.length < 1">
+        You are currently not watching any items.
+      </p>
+      <p ng-if="!loggedIn">
+        Please log in to see your watched items.
+      </p>
+    </div>
+  </div>
+
+  <div class="panel panel-default recently-viewed">
+    <div class="panel-heading">Recently Viewed Items
+    </div>
+    <div class="panel-body">
+      <div class="items" ng-repeat="product in recentlyViewed | limitTo: 6">
+        <a class="item" ng-href="/item/{{product._id}}"><img class="image" height="100" src="{{product.imageurl}}"/></a>
+      </div>
+    </div>
+  </div>
+</div>
