@@ -34,8 +34,9 @@
     </div>
   </div>
 
-  <div class="panel panel-default recently-viewed">
+  <div class="panel panel-default recently-viewed animation" ng-show="recentlyViewed.length > 0">
     <div class="panel-heading">Recently Viewed Items
+      <div class="clear-all"><a ng-click="clearRecentlyViewed()">Clear All</a></div>
     </div>
     <div class="panel-body">
       <div class="items" ng-repeat="product in recentlyViewed | limitTo: 6">

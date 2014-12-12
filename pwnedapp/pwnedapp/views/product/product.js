@@ -22,11 +22,13 @@ myApp.controller('ProductController', ['$scope', '$route', '$http', 'product', f
 
   // Determine if item is being watched
   $http.get("/watchlist").then(function (response) {
-    var list = response.data.map(function (product) {
-      return product._id;
-    });
-    if (response.data.length > 0 && list.indexOf(product._id) > -1) {
-      $scope.inWatchList = true;
+    if (response.data.length > 0) {
+      var list = response.data.map(function (product) {
+        return product._id;
+      });
+      if (list.indexOf(product._id) > -1) {
+        $scope.inWatchList = true;
+      }
     }
   });
 

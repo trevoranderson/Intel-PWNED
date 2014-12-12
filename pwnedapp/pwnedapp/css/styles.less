@@ -136,6 +136,10 @@ body {
     min-width: 700px;
     margin: 15px auto;
 
+    a {
+      cursor: pointer;
+    }
+
     .items {
       display: inline-block;
     }
@@ -154,12 +158,15 @@ body {
       background-color: #fafafa;
       font-size: 16px;
       font-weight: bold;
-      color: @logo;
 
-      .view-all {
+      .view-all, .clear-all {
         float: right;
         vertical-align: middle;
         font-size: 12px;
+        line-height: 20px;
+        a {
+          color: @logo;
+        }
       }
     }
   }
@@ -206,8 +213,13 @@ body {
     bottom: 0;
     height: 600px;
 
-    h4 {
-      font-weight: 600;
+    .merchant {
+      color: @logo;
+      cursor: pointer;
+    }
+
+    .merchant:hover {
+      text-decoration: underline;
     }
 
   }
@@ -216,7 +228,7 @@ body {
     font-size: 18px;
     margin: 15px 0;
 
-    span {
+    .query, .site {
       font-weight: bold;
       color: #7b35ba;
     }
@@ -302,6 +314,7 @@ body {
 
   .image-container {
     float:left;
+    margin-left: 15px;
     margin-right: 25px;
     display: inline-block;
     max-width: 200px;
@@ -457,22 +470,22 @@ body {
   }
 }
 
-.watched-item {
+.customFadeOut {
   -webkit-transition: 0.5s;
 }
 
-.watched-item.ng-enter {
+.customFadeOut.ng-enter {
   opacity: 0;
 }
 
-.watched-item.ng-leave {
+.customFadeOut-item.ng-leave {
   opacity: 1;
 }
 
-.watched-item.ng-enter.ng-enter-active {
+.customFadeOut.ng-enter.ng-enter-active {
   opacity: 1;
 }
 
-.watched-item.ng-leave.ng-leave-active {
+.customFadeOut.ng-leave.ng-leave-active {
   opacity: 0;
 }

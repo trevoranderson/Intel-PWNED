@@ -44,6 +44,20 @@ var myApp = angular.module('myApp', ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ng
       }]
     },
     controller: 'ProductsController'
+  }).when('/search/:merchant', {
+    templateUrl: 'views/products/products.html',
+    resolve: {
+      products: ['$http', '$route', '$filter', function ($http, $route, $filter) {
+        var query = $route.current.params.query;
+        var site = $route.current.params.merchant;
+        var orderBy = $filter('orderBy');
+        return $http.get("/products/search/"+site+"/"+query).then(function (response) {
+          var sorted = orderBy(response.data, 'price', false);
+          return sorted;
+        });
+      }]
+    },
+    controller: 'ProductsController'
   }).otherwise({
     templateUrl: 'views/home/home.html',
     controller: 'HomeController'
