@@ -4,11 +4,10 @@ var fn = require('fn.js');
 var productDB = require('../models/product.js');
 var userDB = require('../models/user.js');
 var scrapers = [
-    require('../scraper/cvs_scraper.js'), 
+    require('../scraper/cvs_scraper.js'),
     require('../scraper/loreal_scraper.js'),
-    require('../scraper/rite_aid_scraper.js'),
     //require('../scraper/target_scraper.js'),
-    require('../scraper/loreal_scraper.js'),
+    require('../scraper/rite_aid_scraper.js')
 ];
 var lazy = require('lazy.js');
 module.exports = function (app, passport) {
@@ -255,9 +254,9 @@ module.exports = function (app, passport) {
         }
     });
     // Trevor: I don't like this
-    //app.get('*', function (req, res) {
-    //    res.sendfile('index.html');
-    //});
+    app.get('*', function (req, res) {
+        res.sendfile('index.html');
+    });
 
 };
 

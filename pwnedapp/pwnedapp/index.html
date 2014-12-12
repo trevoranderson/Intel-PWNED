@@ -27,8 +27,8 @@
         </form>
     </div>
     <div class="nav navbar-nav navbar-right auth">
-      <a href="/login" ng-if="!loggedIn" class="btn btn-default"><span class="fa fa-user"></span> Login</a>
-      <a href="/signup" ng-if="!loggedIn" class="btn btn-default"><span class="fa fa-user"></span> Signup</a>
+      <a href="/login" ng-if="!loggedIn" class="btn btn-default"><i class="fa fa-sign-in"></i> Login</a>
+      <a href="/signup" ng-if="!loggedIn" class="btn btn-default">Signup</a>
       <a href="/profile" ng-if="loggedIn" class="btn btn-default"><span class="fa fa-user"></span> View Profile</a>
       <a ng-click="logout()" ng-if="loggedIn" class="btn btn-default"> Logout</a>
     </div>

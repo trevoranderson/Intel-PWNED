@@ -1,12 +1,15 @@
 <div class="products-container">
   <div class="row">
     <div class="sidebar">
-      <h4>Merchants</h4>
+      <h4>Show results for</h4>
       <p>
+        <div class="merchant" ng-repeat="merchant in merchants" ng-click="filterMerchant(merchant.site)">
+          {{merchant.site}} ({{merchant.count}})
+        </div>
       </p>
     </div>
     <div class="results col-md-8 col-sm-10">
-      <div class="results-message">Displaying {{indexMin + 1}}-{{indexMax+1}} of {{products.length}} result(s) for <span>{{query}}</span>.</div>
+      <div class="results-message">Displaying {{indexMin + 1}}-<span ng-if="indexMax+1 <= products.length">{{indexMax+1}}</span><span ng-if="indexMax+1 > products.length">{{products.length}}</span> of {{products.length}} result(s) for <span class="query">{{query}}</span> <span ng-if="site.length > 0">from <span class="site">{{site}}</span></span>.</div>
       <div class="sort">
         Price:
       <div class="btn-group">
