@@ -6,7 +6,7 @@ var userDB = require('../models/user.js');
 var scrapers = [
     require('../scraper/cvs_scraper.js'),
     require('../scraper/loreal_scraper.js'),
-    //require('../scraper/target_scraper.js'),
+    require('../scraper/walmart.js'),
     require('../scraper/rite_aid_scraper.js')
 ];
 var lazy = require('lazy.js');

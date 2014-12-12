@@ -13,7 +13,7 @@ myApp.controller('ProductsController', ['$scope', '$route', '$filter', '$locatio
 
   var orderBy = $filter('orderBy');
 
-  angular.forEach($scope.products, function (item) {
+  angular.forEach(products, function (item) {
     var sites = $scope.merchants.map(function (site) {
       return site.site;
     });
@@ -21,7 +21,7 @@ myApp.controller('ProductsController', ['$scope', '$route', '$filter', '$locatio
     if (index < 0) {
       $scope.merchants.push({
         site: item.scraperParams.site,
-        count: 0
+        count: 1
       });
     } else {
       $scope.merchants[index].count++;
