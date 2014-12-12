@@ -87,6 +87,7 @@ module.exports = function (app, passport) {
                 lazy(scrapers).each(function (scraper) {
                 scraper.scrapeAll(5, function (err, products) {
                     lazy(products).each(function (p) {
+                        productDB.find({producturl: p.producturl}).remove().exec();
                         var zz = new productDB();
                         zz.name = p.name;
                             zz.keywords = (function () {
