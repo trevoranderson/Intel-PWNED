@@ -20,7 +20,7 @@ var productDB = require('../models/product.js');
 
 var SCRAPER_SITE = "Walmart";
 var siteUrl = 'http://www.walmart.com/cp/1085666';
-var TIME_BETWEEN_REQUESTS = 200;
+var TIME_BETWEEN_REQUESTS = 1000;
 
 var productQueue = [];
 var globalResultArr = [];
@@ -147,22 +147,40 @@ function removeExtraneousChars(input){
     return input.replace(/\r/g, "").replace(/\n/g, "").replace(/\t/g, "").trim();
 }
 function sendProductRequest(productUrl, cb) {
+     var lastaccess = Date(Date.now()).toString();
+    var dummy = {
+                    name: "not known",
+                    price: "not known",
+                    imageurl: "not known",
+                    producturl: "not known",
+                    overview: "not known",
+                    ingredients: "not known",
+                    scraperParams: {
+                        site: SCRAPER_SITE,
+                        lastAccess: lastaccess
+                    }
+                    
+                  };
     request(productUrl, function (err, resp, body) {
-        if (err)
-            throw err;
-
+        if (err) {
+            console.log("Nah son I ain't crashing");
+            cb(null, dummy);
+            return;
+        }
         $ = cheerio.load(body);
         var overview = $('.module > p').text();
         var ingredients = $('.js-ingredients p+ p').text();
         var name_long = $('.js-product-heading').text();
         var name = name_long.trim();
+        if(name==null)
+            name="NO NAME";
         var price = $('.price').text().trim();
         price = price.replace(',','');
         var imgUrl = $('.js-product-primary-image').attr('src');
-        var lastaccess = Date(Date.now()).toString();
+       
         ingredients = ingredients.substring(0, ingredients.indexOf('.'));  //bunch of unformatted junk after period
         var ingredientList = ingredients.split(',').map(removeExtraneousChars); //create list of ingredients
-        
+          
       
 
         var res = {
@@ -179,17 +197,7 @@ function sendProductRequest(productUrl, cb) {
                     
                   };
                   //JERRID: Insert new product into DB
-        var zz = new productDB();
-        zz.name = res.name;
-        zz.price = res.price.substring(1);
-        zz.imageurl = res.imageurl;
-        zz.producturl = res.producturl;
-        zz.overview = res.overview;
-        zz.ingredients = res.ingredients;
-        zz.scraperParams = res.scraperParams;
-        zz.save(function (err, fluffy) {
-          if (err) return console.error(err);
-          });   
+        
         //-------------     
         cb(null, res);
     });
@@ -197,6 +205,8 @@ function sendProductRequest(productUrl, cb) {
 
 
 var sendSyncedProductRequest = function(cbSize, cb) {
+
+
     if(!cb){
         cb = cbSize;
         cbSize = null;
@@ -206,6 +216,7 @@ var sendSyncedProductRequest = function(cbSize, cb) {
         function (url, callback) {
             console.log("Getting " + url);
             getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
+
             if(cbSize && ((index % cbSize) === cbSize-1)){
                 cb(null, globalResultArr);
                 globalResultArr = [];

@@ -55,10 +55,12 @@ haven't 'modulized' yet.
 **/components** contains components for the client-side
 =======
 
-<<<<<<< HEAD
 **/components** contains components for the client-side
+<<<<<<< HEAD
 =======
 **/views** contains partials
 
 
+>>>>>>> xinlei
+=======
 >>>>>>> xinlei
