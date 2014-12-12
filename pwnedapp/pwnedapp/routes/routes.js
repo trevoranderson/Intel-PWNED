@@ -4,12 +4,19 @@ var fn = require('fn.js');
 var productDB = require('../models/product.js');
 var userDB = require('../models/user.js');
 var scrapers = [
+<<<<<<< HEAD
     require('../scraper/cvs.js'), 
     require('../scraper/walmart.js'), 
     require('../scraper/loreal_scraper.js'),
     require('../scraper/rite_aid_scraper.js'),
     //require('../scraper/target_scraper.js'),
     //require('../scraper/loreal_scraper.js'),
+=======
+    require('../scraper/cvs_scraper.js'),
+    require('../scraper/loreal_scraper.js'),
+    require('../scraper/walmart.js'),
+    require('../scraper/rite_aid_scraper.js')
+>>>>>>> FETCH_HEAD
 ];
 var lazy = require('lazy.js');
 module.exports = function (app, passport) {
@@ -89,6 +96,7 @@ module.exports = function (app, passport) {
                 lazy(scrapers).each(function (scraper) {
                 scraper.scrapeAll(5, function (err, products) {
                     lazy(products).each(function (p) {
+                        productDB.find({producturl: p.producturl}).remove().exec();
                         var zz = new productDB();
                         zz.name = p.name;
                             zz.keywords = (function () {
@@ -256,9 +264,9 @@ module.exports = function (app, passport) {
         }
     });
     // Trevor: I don't like this
-    //app.get('*', function (req, res) {
-    //    res.sendfile('index.html');
-    //});
+    app.get('*', function (req, res) {
+        res.sendfile('index.html');
+    });
 
 };
 

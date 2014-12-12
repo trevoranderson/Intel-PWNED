@@ -20,8 +20,8 @@ var productPages   = [];
 var productObjects = [];
 
 var requestsInProcess  = 0;
-var maxRequestsAllowed = 30;
-var minProductRequestNumber   = 5;
+var maxRequestsAllowed = 10;
+var minProductRequestNumber   = 2;
 
 
 
@@ -122,6 +122,9 @@ function getProductDetail(body){
 	//product['info_table']   = $('ul.normal-list').text().replace(/[\r\n\t]/g,'').replace(/\s+/g, ' ');
 	
 	if(product['name']!=''){
+		if(product['price'].match(/ee store/gi)!=null){
+			product['price'] = '$0.00';
+		}
 		productObjects.push(product);
 		return;
 	}
@@ -144,6 +147,9 @@ function getProductDetail(body){
 		require('fs').writeFile('aaabbb.html', body);
 	}*/
 	if(product['name']!=''){
+		if(product['price'].match(/ee store/gi)!=null){
+			product['price'] = '$0.00';
+		}
 		productObjects.push(product);
 		return;
 	}
@@ -225,7 +231,11 @@ function scrap_all(productNumBtwCB, CB){
 
 	if(nothing_to_scrape()){
 		if (requestsInProcess==0){
-			CB (null, productObjects);
+			try{
+				CB (null, productObjects);
+			}catch(err){
+				debug('CALLBACK_ERR', err);
+			}
 			console.log("All Target Products Information is Updated !!!");
 		}else{
 			setTimeout(function(){scrap_all(productNumBtwCB,CB);}, 2000);
@@ -244,10 +254,16 @@ function scrap_all(productNumBtwCB, CB){
 			renderHtml_to(getProductPage, shv);
 		}
 		if(productObjects.length >= productNumBtwCB){
-			debug('productObjects',productObjects);
+			//debug('productObjects',productObjects);
 			var prdObjects = productObjects.slice(0, productNumBtwCB);
 			productObjects = productObjects.slice(productNumBtwCB);
-			CB (null, prdObjects);
+			try{
+				CB (null, prdObjects);
+			}catch(err){
+				debug('CALLBACK_ERR', err);
+			}
+
+
 		}
 		setTimeout(function(){scrap_all(productNumBtwCB,CB);}, 2000);
 	}

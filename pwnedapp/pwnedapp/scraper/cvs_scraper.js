@@ -139,8 +139,11 @@ function removeExtraneousChars(input){
 }
 function sendProductRequest(productUrl, cb) {
     request(productUrl, function (err, resp, body) {
-        if (err)
-            throw err;
+        if (err) {
+            console.log("Nah son I ain't crashing");
+            cb(null, null);
+            return;
+        }
 
         $ = cheerio.load(body);
         var name = removeExtraneousChars($('.prodName').text());
@@ -152,7 +155,6 @@ function sendProductRequest(productUrl, cb) {
         var res = a.match(patt);
         if (res == null){
             console.log ("PRICE NOT FOUND: " + productUrl);
-            decrementRequests();
             cb(null, null);
             return;
         }
@@ -232,7 +234,7 @@ var sendSyncedProductRequest = function(cbSize, cb) {
 
 function waitTillDone(whenDone){
     if(numberOfRequests != 0){
-        console.log("Waiting for requests / Requests Remaining: " + numberOfRequests);
+        console.log("CVS: Waiting for requests / Requests Remaining: " + numberOfRequests);
         setTimeout(function(){waitTillDone(whenDone);}, 10000);
     }
     else {

@@ -5,7 +5,7 @@
         <div class="acnt-header"><span class="fa fa-user"></span> Account Information</div>
           <p>
             <strong>User ID</strong>: {{ user._id }}<br>
-            <strong>E-mail</strong>: {{ user.email }}<br>
+            <strong>Username</strong>: {{ user.email }}<br>
           </p>
       </div>
     </div>
@@ -15,7 +15,7 @@
       </div>
       <div class="watchlist-header">Your Watched Items</div>
       <div class="no-items" ng-if="watchlist.length < 1">You are currently not watching any items.</div>
-      <div class="panel panel-default animation watched-item" ng-mouseenter="product.active = true" ng-mouseleave="product.active = false" ng-repeat="product in watchlist">
+      <div class="panel panel-default customFadeOut watched-item" ng-mouseenter="product.active = true" ng-mouseleave="product.active = false" ng-repeat="product in watchlist">
           <div class="image-container">
             <a ng-href="/item/{{product._id}}"><img class="image" height="150px" src="{{product.imageurl}}"/></a>
           </div>
