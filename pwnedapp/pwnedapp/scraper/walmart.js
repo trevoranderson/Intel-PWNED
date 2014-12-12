@@ -20,7 +20,7 @@ var productDB = require('../models/product.js');
 
 var SCRAPER_SITE = "Walmart";
 var siteUrl = 'http://www.walmart.com/cp/1085666';
-var TIME_BETWEEN_REQUESTS = 1000;
+var TIME_BETWEEN_REQUESTS = 200;
 
 var productQueue = [];
 var globalResultArr = [];
@@ -135,6 +135,7 @@ function getProductPage(productUrl, callback) {
         }
         else
         {
+            if(res)
             globalResultArr.push(res);
             //console.log("Global: "+ "/t" + globalResultArr);
              callback();       
@@ -148,23 +149,11 @@ function removeExtraneousChars(input){
 }
 function sendProductRequest(productUrl, cb) {
      var lastaccess = Date(Date.now()).toString();
-    var dummy = {
-                    name: "not known",
-                    price: "not known",
-                    imageurl: "not known",
-                    producturl: "not known",
-                    overview: "not known",
-                    ingredients: "not known",
-                    scraperParams: {
-                        site: SCRAPER_SITE,
-                        lastAccess: lastaccess
-                    }
-                    
-                  };
+ 
     request(productUrl, function (err, resp, body) {
         if (err) {
             console.log("Nah son I ain't crashing");
-            cb(null, dummy);
+            cb(null, null);
             return;
         }
         $ = cheerio.load(body);
