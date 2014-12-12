@@ -8,7 +8,7 @@
  */
 
 //DEBUG:
-debug("Entered Phantom Script: Loreal");
+//debug("Entered Phantom Script: Loreal");
 
 //need to provide the URL to work on 
 var system = require('system');
@@ -42,11 +42,11 @@ page.open(
 			debug("#### Failure ####\r\n" + request_url);
 
 			//DEBUG
-			debug("Failed to open page.")
+			//debug("Failed to open page.")
 			exit();
 		} else {
 			//DEBUG
-			debug("Opened page.")
+			//debug("Opened page.")
 			click_and_render();
 		}
 	}
@@ -60,7 +60,7 @@ page.open(
 //will continually click the next button until it can't anymore
 function click_and_render(){
 	//DEBUG
-	debug("Looking for next...");
+	//debug("Looking for next...");
 
 	//click the next button if it exists (0 if next found, -1 if not)
 	var status = page.evaluate( function(mouseClick_fn, nd_selector, n_selector) {
@@ -78,10 +78,10 @@ function click_and_render(){
 
 	if( status == -1 ) {
 		//DEBUG
-		debug("EXITTING\n\n");
+		//debug("EXITTING\n\n");
 		exit()
 	} else {
-		debug("Waiting for page to reload...");
+		//debug("Waiting for page to reload...");
 
 		//wait for it to load (3 sec)
 		window.setTimeout(function(){
