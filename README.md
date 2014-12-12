@@ -51,9 +51,4 @@ haven't 'modulized' yet.
 
 **/views** contains partials
 
-<<<<<<< HEAD
 **/components** contains components for the client-side
-=======
-**/views** contains partials
-
-
