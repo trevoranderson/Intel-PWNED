@@ -61,11 +61,11 @@ function sendInitialRequest(inputUrl){
         if (err)
             throw err;
         $ = cheerio.load(body);
-        //console.log("Scraping categories:");
+        console.log("Scraping categories:");
         $('.group li').each(function(index){
             if(index != 0 && index != 1 && index != 2){return;}  //Excluding anything that is not Makeup, Hair, Skin care
             var nextLink = siteUrl + $(this).find('a').attr('href');
-            //console.log("\t" + nextLink);
+            console.log("\t" + nextLink);
             scrapeCategoryPage(nextLink);
         });
         decrementRequests();
@@ -83,10 +83,10 @@ function scrapeCategoryPage(inputUrl){
         if (err)
             throw err;
         $ = cheerio.load(body);
-        //console.log("Scraping subcategories:");
+        console.log("Scraping subcategories:");
         $('div.category li').each(function(index){
             var nextLink = siteUrl + $(this).find('a').attr('href');
-            //console.log("\t" + nextLink);
+            console.log("\t" + nextLink);
             scrapeSubCategoryPage(nextLink);
         });
         decrementRequests();
@@ -111,7 +111,7 @@ function scrapeSubCategoryPage(inputUrl){
         //add product URLs from first page to the queue
         $('div.wrap.products-container').find('article.module-product-box').each(function(index){
             var nextLink = siteUrl + $(this).find('a').attr('href');
-        //   console.log("Product: " + nextLink);
+            console.log("Product: " + nextLink);
             productQueue.push(nextLink);
         });
 
@@ -131,7 +131,7 @@ function loadPagesWithPhantom(url){
         stdout.split("\n").forEach(function(element, index, array) {
             if( element != "" ) {
                 var nextLink = siteUrl + element;
-                //console.log("Product: " + nextLink);
+                console.log("Product: " + nextLink);
                 productQueue.push(nextLink);
             }
         });
@@ -164,7 +164,7 @@ var sendSyncedProductRequest = function(cbSize, cb) {
     var index = 0;
     async.eachSeries(productQueue,
         function (url, callback) {
-        //   console.log("Getting " + url);
+            console.log("Getting " + url);
             getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
             if(cbSize && ((index % cbSize) === cbSize-1)){
                 cb(null, globalResultArr);

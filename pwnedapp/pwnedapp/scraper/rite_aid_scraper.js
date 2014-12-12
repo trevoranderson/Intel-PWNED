@@ -55,11 +55,11 @@ function sendInitialRequest(inputUrl){
         if (err)
             throw err;
         $ = cheerio.load(body);
-        //console.log("Scraping categories:");
+        console.log("Scraping categories:");
         $('#left-navi li').each(function(index){
             if(index != 3 && index != 4){return;}  //Excluding anything that is not Beauty or Personal Care
             var nextLink = $(this).find('a').attr('href') + "?limit=72";
-            //console.log("\t" + nextLink);
+            console.log("\t" + nextLink);
             scrapeSingleCategoryPage(nextLink, 1);
         });
         decrementRequests();
@@ -86,7 +86,7 @@ function scrapeSingleCategoryPage(inputUrl, page){
         //check that we haven't gone over the max page
         var currPage = $("li[class='current number-btn']").first().text();
         if( currPage != page ) {
-            //console.log("Finished: " + categoryPage);
+            console.log("Finished: " + categoryPage);
             decrementRequests();
             return;
         }
@@ -94,12 +94,12 @@ function scrapeSingleCategoryPage(inputUrl, page){
         //add the product URL to the queue
         $('.product-name a').each(function(index){
             var nextLink = $(this).attr('href');
-            //console.log("Product: " + nextLink);
+            console.log("Product: " + nextLink);
             productQueue.push(nextLink);
         });
 
         //comment this line out to only grab the first page of every category
-        scrapeSingleCategoryPage(inputUrl, page+1);
+        //scrapeSingleCategoryPage(inputUrl, page+1);
 
         decrementRequests();
     }).setMaxListeners(0);
@@ -130,7 +130,7 @@ var sendSyncedProductRequest = function(cbSize, cb) {
     var index = 0;
     async.eachSeries(productQueue,
         function (url, callback) {
-            //console.log("Getting " + url);
+            console.log("Getting " + url);
             getProductPage(url, function(){setTimeout(callback, TIME_BETWEEN_REQUESTS);});
             if(cbSize && ((index % cbSize) === cbSize-1)){
                 cb(null, globalResultArr);
