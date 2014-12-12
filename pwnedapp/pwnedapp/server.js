@@ -32,7 +32,7 @@ app.use(bodyParser.json()); // get information from html forms
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(session({
-  cookie: {maxAge: new Date(Date.now() + 3600000)},
+  cookie: {maxAge: new Date(Date.now() + 3600000000)},
   secret: "howdoyouturnthisthingon",
   store: new MongoStore({db: mongoose.connection.db})
 }));
