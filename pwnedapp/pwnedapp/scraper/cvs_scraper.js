@@ -84,7 +84,7 @@ function scrapeCategoriesPage2(inputUrl){
 
         $ = cheerio.load(body);
         $('.refineStyleCatalog li').each(function(index){
-			if(index != 0) {return;}
+			//if(index != 0) {return;}
             var nextLink = siteUrl + $(this).find('a').attr('href');
             var ind = nextLink.indexOf('?');
             if(ind != -1){
