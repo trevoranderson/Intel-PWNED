@@ -6,8 +6,9 @@ var userDB = require('../models/user.js');
 var scrapers = [
     require('../scraper/cvs_scraper.js'),
     require('../scraper/loreal_scraper.js'),
+    require('../scraper/rite_aid_scraper.js'),
     //require('../scraper/target_scraper.js'),
-    require('../scraper/rite_aid_scraper.js')
+    require('../scraper/walmart.js'),
 ];
 var lazy = require('lazy.js');
 module.exports = function (app, passport) {
@@ -87,6 +88,7 @@ module.exports = function (app, passport) {
                 lazy(scrapers).each(function (scraper) {
                 scraper.scrapeAll(5, function (err, products) {
                     lazy(products).each(function (p) {
+                        productDB.find({producturl: p.producturl}).remove().exec();
                         var zz = new productDB();
                         zz.name = p.name;
                             zz.keywords = (function () {
